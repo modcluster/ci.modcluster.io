@@ -158,17 +158,26 @@ popd
 
 REM Substitute paths in files so as to be configurable by postinstall
 powershell -Command "get-childitem %CMAKE_INSTALL_PREFIX% -include *.conf,*.cnf,*.html.* -recurse | ForEach {(Get-Content $_ | ForEach { $_ -replace '%CMAKE_INSTALL_PREFIX:\=/%', '@HTTPD_SERVER_ROOT_POSIX@'}) | Set-Content -Encoding ascii $_ }"
+IF NOT %ERRORLEVEL% == 0 ( exit 1 )
 mkdir %CMAKE_INSTALL_PREFIX%\cache
 powershell -Command "(gc %CMAKE_INSTALL_PREFIX%\conf\extra\proxy-html.conf) -replace 'C:/path/', '@HTTPD_SERVER_ROOT_POSIX@/bin/' | Out-File -Encoding ascii %CMAKE_INSTALL_PREFIX%\conf\extra\proxy-html.conf"
+IF NOT %ERRORLEVEL% == 0 ( exit 1 )
 powershell -Command "(gc %CMAKE_INSTALL_PREFIX%\conf\extra\httpd-ssl.conf) -replace ':/ssl_scache', ':@HTTPD_SERVER_ROOT_POSIX@/cache/ssl_scache' | Out-File -Encoding ascii %CMAKE_INSTALL_PREFIX%\conf\extra\httpd-ssl.conf"
+IF NOT %ERRORLEVEL% == 0 ( exit 1 )
 powershell -Command "(gc %CMAKE_INSTALL_PREFIX%\conf\extra\httpd-ssl.conf) -replace '/error_log', 'logs/ssl_error_log' | Out-File -Encoding ascii %CMAKE_INSTALL_PREFIX%\conf\extra\httpd-ssl.conf"
+IF NOT %ERRORLEVEL% == 0 ( exit 1 )
 powershell -Command "(gc %CMAKE_INSTALL_PREFIX%\conf\extra\httpd-ssl.conf) -replace '/access_log', 'logs/ssl_access_log' | Out-File -Encoding ascii %CMAKE_INSTALL_PREFIX%\conf\extra\httpd-ssl.conf"
+IF NOT %ERRORLEVEL% == 0 ( exit 1 )
 powershell -Command "(gc %CMAKE_INSTALL_PREFIX%\conf\extra\httpd-ssl.conf) -replace '/ssl_request_log', 'logs/ssl_request_log' | Out-File -Encoding ascii %CMAKE_INSTALL_PREFIX%\conf\extra\httpd-ssl.conf"
+IF NOT %ERRORLEVEL% == 0 ( exit 1 )
 powershell -Command "(gc %CMAKE_INSTALL_PREFIX%\conf\extra\httpd-ssl.conf) -replace '/server.crt', '@HTTPD_SERVER_ROOT_POSIX@/conf/ssl/certs/localhost.crt' | Out-File -Encoding ascii %CMAKE_INSTALL_PREFIX%\conf\extra\httpd-ssl.conf"
+IF NOT %ERRORLEVEL% == 0 ( exit 1 )
 powershell -Command "(gc %CMAKE_INSTALL_PREFIX%\conf\extra\httpd-ssl.conf) -replace '/server.key', '@HTTPD_SERVER_ROOT_POSIX@/conf/ssl/private/localhost.key' | Out-File -Encoding ascii %CMAKE_INSTALL_PREFIX%\conf\extra\httpd-ssl.conf"
+IF NOT %ERRORLEVEL% == 0 ( exit 1 )
 
 REM Add custom It works! HTML page.
 powershell -Command "(gc %CMAKE_INSTALL_PREFIX%\htdocs\index.html) -replace '</body>', '<p>Packaged by https://ci.modcluster.io/<br>Maintainer: Michal Karm Babacek &lt;karm@fedoraproject.org&gt;</p></body>' | Out-File -Encoding ascii %CMAKE_INSTALL_PREFIX%\htdocs\index.html"
+IF NOT %ERRORLEVEL% == 0 ( exit 1 )
 
 REM Add a custom README file
 copy /Y %WORKSPACE%\ci-scripts\windows\httpd\README.md %CMAKE_INSTALL_PREFIX%\README.md
@@ -177,14 +186,17 @@ REM Add postinstall file
 copy /Y %WORKSPACE%\ci-scripts\windows\httpd\postinstall.bat %CMAKE_INSTALL_PREFIX%\postinstall.bat
 
 REM Generate "BOM", append at the end of README.md
-powershell -Command "$files = Get-ChildItem %WORKSPACE%\dependencies\arch=%arch%,label=%label%\;foreach($file in $files){Add-Content %CMAKE_INSTALL_PREFIX%\README.md \" * $($file.Name -ireplace '(.*)\.zip', '$1')\" ;}"
+powershell -Command "$files = Get-ChildItem '%WORKSPACE%\dependencies\arch=%arch%,label=%label%\';foreach($file in $files){Add-Content %CMAKE_INSTALL_PREFIX%\README.md \" * $($file.Name -ireplace '(.*)\.zip', '$1')\" ;}"
+IF NOT %ERRORLEVEL% == 0 ( exit 1 )
 echo ## VC Runtime dependency>> %CMAKE_INSTALL_PREFIX%\README.md
 powershell -Command "$cmd='dumpbin.exe /dependents %CMAKE_INSTALL_PREFIX%\bin\httpd.exe';Add-Content %CMAKE_INSTALL_PREFIX%\README.md \" * $($(iex $cmd) -match 'VCRUN')\" ;"
+IF NOT %ERRORLEVEL% == 0 ( exit 1 )
 
 REM Package the big, devel package
 pushd %CMAKE_INSTALL_PREFIX%
 SET HTTPD_DEVEL_ZIP_PATH=%WORKSPACE%\httpd-%BRANCH_OR_TAG%-win.%arch%-devel.zip
 zip -r -9 %HTTPD_DEVEL_ZIP_PATH% .
+IF NOT %ERRORLEVEL% == 0 ( exit 1 )
 popd
 
 
@@ -194,6 +206,7 @@ REM
 mkdir %WORKSPACE%\tmp\
 pushd %WORKSPACE%\tmp\
 unzip %HTTPD_DEVEL_ZIP_PATH%
+IF NOT %ERRORLEVEL% == 0 ( type %HTTPD_SERVER_ROOT%\logs\error_log & exit 1 )
 dir
 call postinstall.bat
 set HTTPD_SERVER_ROOT=%cd%
@@ -201,41 +214,51 @@ pushd %WORKSPACE%\tmp\bin
 start cmd /C httpd.exe
 powershell -Command "Start-Sleep -s 1"
 ab.exe http://localhost:80/
-IF NOT %ERRORLEVEL% == 0 ( exit 1 )
+IF NOT %ERRORLEVEL% == 0 ( type %HTTPD_SERVER_ROOT%\logs\error_log & exit 1 )
 powershell -Command "for ($j=0; $j -lt 100; $j++) {$url = 'https://localhost:443'; $web = New-Object Net.WebClient; [System.Net.ServicePointManager]::ServerCertificateValidationCallback = { $true }; $output = $web.DownloadString($url); [System.Net.ServicePointManager]::ServerCertificateValidationCallback = $null; if ($output -like '*It works*') { echo 'ok' } else { exit 1 }}; exit 0"
-IF NOT %ERRORLEVEL% == 0 ( exit 1 )
+IF NOT %ERRORLEVEL% == 0 ( type %HTTPD_SERVER_ROOT%\logs\error_log & exit 1 )
 taskkill /im httpd.exe /F
 powershell -Command "if(@( Get-Content %HTTPD_SERVER_ROOT%\logs\error_log | Where-Object { $_.Contains('error') -or $_.Contains('fault') -or $_.Contains('mismatch') } ).Count -gt 0) { exit 1 } else {exit 0 }"
-IF NOT %ERRORLEVEL% == 0 ( exit 1 )
+IF NOT %ERRORLEVEL% == 0 ( type %HTTPD_SERVER_ROOT%\logs\error_log & exit 1 )
+
+echo Wait 10s
+powershell -Command "Start-Sleep -s 10"
 
 REM Smoke test devel package - all modules
 powershell -Command "(gc %HTTPD_SERVER_ROOT%\conf\httpd.conf) -replace '#Include conf/extra/', 'Include conf/extra/' | Out-File -encoding ascii %HTTPD_SERVER_ROOT%\conf\httpd.conf"
+IF NOT %ERRORLEVEL% == 0 ( type %HTTPD_SERVER_ROOT%\logs\error_log & exit 1 )
 powershell -Command "(gc %HTTPD_SERVER_ROOT%\conf\httpd.conf) -replace '# LoadModule', 'LoadModule' | Out-File -encoding ascii %HTTPD_SERVER_ROOT%\conf\httpd.conf"
+IF NOT %ERRORLEVEL% == 0 ( type %HTTPD_SERVER_ROOT%\logs\error_log & exit 1 )
 powershell -Command "(gc %HTTPD_SERVER_ROOT%\conf\httpd.conf) -replace '#LoadModule foo_module', '# LoadModule foo_module' | Out-File -encoding ascii %HTTPD_SERVER_ROOT%\conf\httpd.conf"
+IF NOT %ERRORLEVEL% == 0 ( type %HTTPD_SERVER_ROOT%\logs\error_log & exit 1 )
 mkdir %HTTPD_SERVER_ROOT%\docs\dummy-host.example.com
 mkdir %HTTPD_SERVER_ROOT%\docs\dummy-host2.example.com
 start cmd /C httpd.exe
 powershell -Command "Start-Sleep -s 1"
 ab.exe http://localhost:80/
-IF NOT %ERRORLEVEL% == 0 ( exit 1 )
+IF NOT %ERRORLEVEL% == 0 ( type %HTTPD_SERVER_ROOT%\logs\error_log & exit 1 )
 powershell -Command "for ($j=0; $j -lt 100; $j++) {$url = 'https://localhost:443'; $web = New-Object Net.WebClient; [System.Net.ServicePointManager]::ServerCertificateValidationCallback = { $true }; $output = $web.DownloadString($url); [System.Net.ServicePointManager]::ServerCertificateValidationCallback = $null; if ($output -like '*It works*') { echo 'ok' } else { exit 1 }}; exit 0"
-IF NOT %ERRORLEVEL% == 0 ( exit 1 )
+IF NOT %ERRORLEVEL% == 0 ( type %HTTPD_SERVER_ROOT%\logs\error_log & exit 1 )
 taskkill /im httpd.exe /F
 powershell -Command "if(@( Get-Content %HTTPD_SERVER_ROOT%\logs\error_log | Where-Object { $_.Contains('error') -or $_.Contains('fault') -or $_.Contains('mismatch') } ).Count -gt 0) { exit 1 } else {exit 0 }"
-IF NOT %ERRORLEVEL% == 0 ( exit 1 )
+IF NOT %ERRORLEVEL% == 0 ( type %HTTPD_SERVER_ROOT%\logs\error_log & exit 1 )
 popd
 popd
 
+echo Wait 10s
+powershell -Command "Start-Sleep -s 10"
 
 REM Prepare trimmed package
 mkdir %WORKSPACE%\target-trimmed\
 pushd %WORKSPACE%\target-trimmed\
 unzip %HTTPD_DEVEL_ZIP_PATH%
+IF NOT %ERRORLEVEL% == 0 ( exit 1 )
 rmdir /s /q conf\original
 rmdir /s /q include
 powershell -Command "get-childitem . -include *.pdb,test*.exe,*test.exe,runsuite*,*.lib,*.exp -recurse | ForEach {(Remove-Item $_)}"
 SET HTTPD_ZIP_PATH=%WORKSPACE%\httpd-%BRANCH_OR_TAG%-win.%arch%.zip
 zip -r -9 %HTTPD_ZIP_PATH% .
+IF NOT %ERRORLEVEL% == 0 ( exit 1 )
 popd
 
 
@@ -245,34 +268,41 @@ REM
 mkdir %WORKSPACE%\tmp-trimmed\
 pushd %WORKSPACE%\tmp-trimmed\
 unzip %HTTPD_ZIP_PATH%
+IF NOT %ERRORLEVEL% == 0 ( exit 1 )
 call postinstall.bat
 set HTTPD_SERVER_ROOT=%cd%
 pushd %WORKSPACE%\tmp-trimmed\bin
 start cmd /C httpd.exe
 powershell -Command "Start-Sleep -s 1"
 ab.exe http://localhost:80/
-IF NOT %ERRORLEVEL% == 0 ( exit 1 )
+IF NOT %ERRORLEVEL% == 0 ( type %HTTPD_SERVER_ROOT%\logs\error_log & exit 1 )
 powershell -Command "for ($j=0; $j -lt 100; $j++) {$url = 'https://localhost:443'; $web = New-Object Net.WebClient; [System.Net.ServicePointManager]::ServerCertificateValidationCallback = { $true }; $output = $web.DownloadString($url); [System.Net.ServicePointManager]::ServerCertificateValidationCallback = $null; if ($output -like '*It works*') { echo 'ok' } else { exit 1 }}; exit 0"
-IF NOT %ERRORLEVEL% == 0 ( exit 1 )
+IF NOT %ERRORLEVEL% == 0 ( type %HTTPD_SERVER_ROOT%\logs\error_log & exit 1 )
 taskkill /im httpd.exe /F
 powershell -Command "if(@( Get-Content %HTTPD_SERVER_ROOT%\logs\error_log | Where-Object { $_.Contains('error') -or $_.Contains('fault') -or $_.Contains('mismatch') } ).Count -gt 0) { exit 1 } else {exit 0 }"
-IF NOT %ERRORLEVEL% == 0 ( exit 1 )
+IF NOT %ERRORLEVEL% == 0 ( type %HTTPD_SERVER_ROOT%\logs\error_log & exit 1 )
+
+echo Wait 10s
+powershell -Command "Start-Sleep -s 10"
 
 REM Smoke test trimmed package - all modules
 powershell -Command "(gc %HTTPD_SERVER_ROOT%\conf\httpd.conf) -replace '#Include conf/extra/', 'Include conf/extra/' | Out-File -encoding ascii %HTTPD_SERVER_ROOT%\conf\httpd.conf"
+IF NOT %ERRORLEVEL% == 0 ( exit 1 )
 powershell -Command "(gc %HTTPD_SERVER_ROOT%\conf\httpd.conf) -replace '# LoadModule', 'LoadModule' | Out-File -encoding ascii %HTTPD_SERVER_ROOT%\conf\httpd.conf"
+IF NOT %ERRORLEVEL% == 0 ( exit 1 )
 powershell -Command "(gc %HTTPD_SERVER_ROOT%\conf\httpd.conf) -replace '#LoadModule foo_module', '# LoadModule foo_module' | Out-File -encoding ascii %HTTPD_SERVER_ROOT%\conf\httpd.conf"
+IF NOT %ERRORLEVEL% == 0 ( exit 1 )
 mkdir %HTTPD_SERVER_ROOT%\docs\dummy-host.example.com
 mkdir %HTTPD_SERVER_ROOT%\docs\dummy-host2.example.com
 start cmd /C httpd.exe
 powershell -Command "Start-Sleep -s 1"
 ab.exe http://localhost:80/
-IF NOT %ERRORLEVEL% == 0 ( exit 1 )
+IF NOT %ERRORLEVEL% == 0 ( type %HTTPD_SERVER_ROOT%\logs\error_log & exit 1 )
 powershell -Command "for ($j=0; $j -lt 100; $j++) {$url = 'https://localhost:443'; $web = New-Object Net.WebClient; [System.Net.ServicePointManager]::ServerCertificateValidationCallback = { $true }; $output = $web.DownloadString($url); [System.Net.ServicePointManager]::ServerCertificateValidationCallback = $null; if ($output -like '*It works*') { echo 'ok' } else { exit 1 }}; exit 0"
-IF NOT %ERRORLEVEL% == 0 ( exit 1 )
+IF NOT %ERRORLEVEL% == 0 ( type %HTTPD_SERVER_ROOT%\logs\error_log & exit 1 )
 taskkill /im httpd.exe /F
 powershell -Command "if(@( Get-Content %HTTPD_SERVER_ROOT%\logs\error_log | Where-Object { $_.Contains('error') -or $_.Contains('fault') -or $_.Contains('mismatch') } ).Count -gt 0) { exit 1 } else {exit 0 }"
-IF NOT %ERRORLEVEL% == 0 ( exit 1 )
+IF NOT %ERRORLEVEL% == 0 ( type %HTTPD_SERVER_ROOT%\logs\error_log & exit 1 )
 popd
 popd
 
