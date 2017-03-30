@@ -1,5 +1,5 @@
 # Apache HTTP Server
-This is Apache HTTP Server Windows binary distribution brought to you by [mod_proxy_cluster](http://modcluster.io) community.
+This is Apache HTTP Server Windows binary distribution brought to you by [mod_proxy_cluster](http://modcluster.io) community. See ```htdocs\index.html``` for more information.
 
 The zip package is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
 See the LICENSE, COPYING, NOTICE or README files packaged in the directory ```.\licenses``` in this zip archive.
