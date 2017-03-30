@@ -47,4 +47,6 @@ echo root@localhost>>stdin.tmp
 type stdin.tmp | openssl req -new -key %HTTPD_SERVER_ROOT_POSIX%/conf/ssl/private/localhost.key -x509 -days 365 -set_serial %RANDOM% -out %HTTPD_SERVER_ROOT_POSIX%/conf/ssl/certs/localhost.crt
 del /Q stdin.tmp
 
+popd
+
 echo [%DATE% %TIME%] Done
