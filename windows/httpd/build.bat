@@ -229,7 +229,7 @@ powershell -Command "(gc %HTTPD_SERVER_ROOT%\conf\httpd.conf) -replace '#Include
 IF NOT %ERRORLEVEL% == 0 ( type %HTTPD_SERVER_ROOT%\logs\error_log & exit 1 )
 powershell -Command "(gc %HTTPD_SERVER_ROOT%\conf\httpd.conf) -replace '# LoadModule', 'LoadModule' | Out-File -encoding ascii %HTTPD_SERVER_ROOT%\conf\httpd.conf"
 IF NOT %ERRORLEVEL% == 0 ( type %HTTPD_SERVER_ROOT%\logs\error_log & exit 1 )
-powershell -Command "(gc %HTTPD_SERVER_ROOT%\conf\httpd.conf) -replace '#LoadModule foo_module', '# LoadModule foo_module' | Out-File -encoding ascii %HTTPD_SERVER_ROOT%\conf\httpd.conf"
+powershell -Command "(gc %HTTPD_SERVER_ROOT%\conf\httpd.conf) -replace 'LoadModule foo_module', '# LoadModule foo_module' | Out-File -encoding ascii %HTTPD_SERVER_ROOT%\conf\httpd.conf"
 IF NOT %ERRORLEVEL% == 0 ( type %HTTPD_SERVER_ROOT%\logs\error_log & exit 1 )
 mkdir %HTTPD_SERVER_ROOT%\docs\dummy-host.example.com
 mkdir %HTTPD_SERVER_ROOT%\docs\dummy-host2.example.com
@@ -290,7 +290,7 @@ powershell -Command "(gc %HTTPD_SERVER_ROOT%\conf\httpd.conf) -replace '#Include
 IF NOT %ERRORLEVEL% == 0 ( exit 1 )
 powershell -Command "(gc %HTTPD_SERVER_ROOT%\conf\httpd.conf) -replace '# LoadModule', 'LoadModule' | Out-File -encoding ascii %HTTPD_SERVER_ROOT%\conf\httpd.conf"
 IF NOT %ERRORLEVEL% == 0 ( exit 1 )
-powershell -Command "(gc %HTTPD_SERVER_ROOT%\conf\httpd.conf) -replace '#LoadModule foo_module', '# LoadModule foo_module' | Out-File -encoding ascii %HTTPD_SERVER_ROOT%\conf\httpd.conf"
+powershell -Command "(gc %HTTPD_SERVER_ROOT%\conf\httpd.conf) -replace 'LoadModule foo_module', '# LoadModule foo_module' | Out-File -encoding ascii %HTTPD_SERVER_ROOT%\conf\httpd.conf"
 IF NOT %ERRORLEVEL% == 0 ( exit 1 )
 mkdir %HTTPD_SERVER_ROOT%\docs\dummy-host.example.com
 mkdir %HTTPD_SERVER_ROOT%\docs\dummy-host2.example.com
