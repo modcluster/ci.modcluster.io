@@ -62,13 +62,13 @@ cd %WORKSPACE%\cmakebuild
 
 REM CMake. Beware: Command must be shorter than 8191 chars...
 cmake -G "NMake Makefiles" -DOPENSSL_ROOT_DIR=%WORKSPACE_POSSIX%/dependencies/openssl -DLIBXML2_INCLUDE_DIR=%WORKSPACE_POSSIX%/dependencies/libxml2/include/libxml2/ -DLIBXML2_LIBRARIES=%WORKSPACE_POSSIX%/dependencies/libxml2/lib/libxml2.lib;%WORKSPACE_POSSIX%/dependencies/libxml2/lib/libxml2_a.lib;%WORKSPACE_POSSIX%/dependencies/libxml2/lib/libxml2_a_dll.lib -DLIBXML2_XMLLINT_EXECUTABLE=%WORKSPACE_POSSIX%/dependencies/libxml2/bin/xmllint.exe -DLIBXML2_ICONV_INCLUDE_DIR=%WORKSPACE_POSSIX%/dependencies/libxml2/include/ -DLIBXML2_ICONV_LIBRARIES=%WORKSPACE_POSSIX%/dependencies/libxml2/lib/libiconv.lib;%WORKSPACE_POSSIX%/dependencies/libxml2/lib/libcharset.lib -DZLIB_INCLUDE_DIRS=%WORKSPACE_POSSIX%/dependencies/zlib/include/ -DZLIB_LIBRARY=%WORKSPACE_POSSIX%/dependencies/zlib/z.lib -DAPR_INCLUDE_DIR=%WORKSPACE_POSSIX%/dependencies/apr/include/ -DAPR_LIBRARIES=%WORKSPACE_POSSIX%/dependencies/apr/lib/libapr-1.lib;%WORKSPACE_POSSIX%/dependencies/apr/lib/libaprapp-1.lib;%WORKSPACE_POSSIX%/dependencies/apr-util/lib/apr_crypto_openssl-1.lib;%WORKSPACE_POSSIX%/dependencies/apr-util/lib/apr_dbd_odbc-1.lib;%WORKSPACE_POSSIX%/dependencies/apr-util/lib/apr_ldap-1.lib;%WORKSPACE_POSSIX%/dependencies/apr-util/lib/libaprutil-1.lib -DEXTRA_INCLUDES=%WORKSPACE_POSSIX%/dependencies/apr-util/include/ -DAPU_HAVE_CRYPTO=ON -DAPR_HAS_XLATE=ON -DAPR_HAS_LDAP=ON -DPCRE_LIBRARIES=%WORKSPACE_POSSIX%/dependencies/pcre/lib/bz2.lib;%WORKSPACE_POSSIX%/dependencies/pcre/lib/pcrecppd.lib;%WORKSPACE_POSSIX%/dependencies/pcre/lib/pcred.lib;%WORKSPACE_POSSIX%/dependencies/pcre/lib/pcreposixd.lib -DPCRE_INCLUDE_DIR=%WORKSPACE_POSSIX%/dependencies/pcre/include/ -DLUA_LIBRARIES=%WORKSPACE_POSSIX%/dependencies/lua/lib/lua-v5-3-4.lib;%WORKSPACE_POSSIX%/dependencies/lua/lib/luac.lib -DLUA_INCLUDE_DIR=%WORKSPACE_POSSIX%/dependencies/lua/include/ -DNGHTTP2_LIBRARIES=%WORKSPACE_POSSIX%/dependencies/nghttp2/lib/nghttp2.lib -DNGHTTP2_INCLUDE_DIR=%WORKSPACE_POSSIX%/dependencies/nghttp2/include/ -DCMAKE_INSTALL_PREFIX=%CMAKE_INSTALL_PREFIX_POSSIX% ..
-
+IF NOT %ERRORLEVEL% == 0 ( exit 1 )
 REM Compile
 nmake
-
+IF NOT %ERRORLEVEL% == 0 ( exit 1 )
 REM Install
 nmake install
-
+IF NOT %ERRORLEVEL% == 0 ( exit 1 )
 REM Copy all stuff to create a developer release.
 
 mkdir %CMAKE_INSTALL_PREFIX%\licenses

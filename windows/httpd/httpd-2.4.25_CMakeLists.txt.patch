@@ -1,6 +1,6 @@
 # @author: Michal Karm Babacek <karm@fedoraproject.org>
-*** "./CMakeLists.txt"	Wed Nov 30 14:40:15 2016
---- "./CMakeLists.txt"	Thu Mar 30 02:32:47 2017
+*** "./CMakeLists.txt"	Thu Mar 30 11:09:54 2017
+--- "./CMakeLists.txt"	Thu Mar 30 11:10:27 2017
 ***************
 *** 381,386 ****
 --- 381,387 ----
@@ -47,7 +47,7 @@
     SET(mod_proxy_html_extra_libs        "${LIBXML2_LIBRARIES};${LIBXML2_ICONV_LIBRARIES}")
   ENDIF()
 ! SET(mod_proxy_scgi_extra_libs        mod_proxy)
-! SET(mod_proxy_wstunnel_extra_libs    mod_proxy)
+  SET(mod_proxy_wstunnel_extra_libs    mod_proxy)
   SET(mod_proxy_http2_requires               NGHTTP2_FOUND)
   SET(mod_proxy_http2_extra_defines          ssize_t=long)
   SET(mod_proxy_http2_extra_includes         ${NGHTTP2_INCLUDE_DIR})
@@ -73,7 +73,7 @@
     SET(mod_proxy_html_extra_libs        "${LIBXML2_LIBRARIES};${LIBXML2_ICONV_LIBRARIES}")
   ENDIF()
 ! SET(mod_proxy_scgi_extra_libs        mod_proxy.lib)
-! SET(mod_proxy_wstunnel_extra_libs    mod_proxy.lib)
+  SET(mod_proxy_wstunnel_extra_libs    mod_proxy)
   SET(mod_proxy_http2_requires               NGHTTP2_FOUND)
   SET(mod_proxy_http2_extra_defines          ssize_t=long)
   SET(mod_proxy_http2_extra_includes         ${NGHTTP2_INCLUDE_DIR})
