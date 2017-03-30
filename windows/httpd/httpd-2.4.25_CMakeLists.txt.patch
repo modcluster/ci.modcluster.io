@@ -1,0 +1,105 @@
+# @author: Michal Karm Babacek <karm@fedoraproject.org>
+*** "./CMakeLists.txt"	Wed Nov 30 14:40:15 2016
+--- "./CMakeLists.txt"	Thu Mar 30 02:32:47 2017
+***************
+*** 381,386 ****
+--- 381,387 ----
+  SET(mod_http2_requires               NGHTTP2_FOUND)
+  SET(mod_http2_extra_defines          ssize_t=long)
+  SET(mod_http2_extra_libs             ${NGHTTP2_LIBRARIES})
++ SET(mod_http2_extra_includes         ${NGHTTP2_INCLUDE_DIR})
+  SET(mod_http2_extra_sources
+    modules/http2/h2_alt_svc.c         modules/http2/h2_bucket_eoc.c
+    modules/http2/h2_bucket_eos.c      modules/http2/h2_config.c
+***************
+*** 402,408 ****
+  )
+  SET(mod_ldap_main_source             modules/ldap/util_ldap.c)
+  SET(mod_ldap_requires                APR_HAS_LDAP)
+! SET(mod_lua_extra_defines            AP_LUA_DECLARE_EXPORT)
+  SET(mod_lua_extra_includes           ${LUA_INCLUDE_DIR})
+  SET(mod_lua_extra_libs               ${LUA_LIBRARIES})
+  SET(mod_lua_extra_sources
+--- 403,409 ----
+  )
+  SET(mod_ldap_main_source             modules/ldap/util_ldap.c)
+  SET(mod_ldap_requires                APR_HAS_LDAP)
+! SET(mod_lua_extra_defines            AP_LUA_DECLARE_EXPORT LUA_COMPAT_5_1 LUA_COMPAT_MODULE)
+  SET(mod_lua_extra_includes           ${LUA_INCLUDE_DIR})
+  SET(mod_lua_extra_libs               ${LUA_LIBRARIES})
+  SET(mod_lua_extra_sources
+***************
+*** 419,443 ****
+    modules/proxy/ajp_header.c         modules/proxy/ajp_link.c
+    modules/proxy/ajp_msg.c            modules/proxy/ajp_utils.c
+  )
+! SET(mod_proxy_ajp_extra_libs         mod_proxy)
+! SET(mod_proxy_balancer_extra_libs    mod_proxy)
+! SET(mod_proxy_connect_extra_libs     mod_proxy)
+! SET(mod_proxy_express_extra_libs     mod_proxy)
+! SET(mod_proxy_fcgi_extra_libs        mod_proxy)
+! SET(mod_proxy_ftp_extra_libs         mod_proxy)
+! SET(mod_proxy_hcheck_extra_libs      mod_proxy)
+! SET(mod_proxy_http_extra_libs        mod_proxy)
+  SET(mod_proxy_html_requires          LIBXML2_FOUND)
+  IF(LIBXML2_FOUND)
+    SET(mod_proxy_html_extra_includes    "${LIBXML2_INCLUDE_DIR};${LIBXML2_ICONV_INCLUDE_DIR}")
+    SET(mod_proxy_html_extra_libs        "${LIBXML2_LIBRARIES};${LIBXML2_ICONV_LIBRARIES}")
+  ENDIF()
+! SET(mod_proxy_scgi_extra_libs        mod_proxy)
+! SET(mod_proxy_wstunnel_extra_libs    mod_proxy)
+  SET(mod_proxy_http2_requires               NGHTTP2_FOUND)
+  SET(mod_proxy_http2_extra_defines          ssize_t=long)
+  SET(mod_proxy_http2_extra_includes         ${NGHTTP2_INCLUDE_DIR})
+! SET(mod_proxy_http2_extra_libs             ${NGHTTP2_LIBRARIES} mod_proxy)
+  SET(mod_proxy_http2_extra_sources
+    modules/http2/h2_proxy_session.c   modules/http2/h2_proxy_util.c
+  )
+--- 420,444 ----
+    modules/proxy/ajp_header.c         modules/proxy/ajp_link.c
+    modules/proxy/ajp_msg.c            modules/proxy/ajp_utils.c
+  )
+! SET(mod_proxy_ajp_extra_libs         mod_proxy.lib)
+! SET(mod_proxy_balancer_extra_libs    mod_proxy.lib)
+! SET(mod_proxy_connect_extra_libs     mod_proxy.lib)
+! SET(mod_proxy_express_extra_libs     mod_proxy.lib)
+! SET(mod_proxy_fcgi_extra_libs        mod_proxy.lib)
+! SET(mod_proxy_ftp_extra_libs         mod_proxy.lib)
+! SET(mod_proxy_hcheck_extra_libs      mod_proxy.lib)
+! SET(mod_proxy_http_extra_libs        mod_proxy.lib)
+  SET(mod_proxy_html_requires          LIBXML2_FOUND)
+  IF(LIBXML2_FOUND)
+    SET(mod_proxy_html_extra_includes    "${LIBXML2_INCLUDE_DIR};${LIBXML2_ICONV_INCLUDE_DIR}")
+    SET(mod_proxy_html_extra_libs        "${LIBXML2_LIBRARIES};${LIBXML2_ICONV_LIBRARIES}")
+  ENDIF()
+! SET(mod_proxy_scgi_extra_libs        mod_proxy.lib)
+! SET(mod_proxy_wstunnel_extra_libs    mod_proxy.lib)
+  SET(mod_proxy_http2_requires               NGHTTP2_FOUND)
+  SET(mod_proxy_http2_extra_defines          ssize_t=long)
+  SET(mod_proxy_http2_extra_includes         ${NGHTTP2_INCLUDE_DIR})
+! SET(mod_proxy_http2_extra_libs             ${NGHTTP2_LIBRARIES} mod_proxy.lib)
+  SET(mod_proxy_http2_extra_sources
+    modules/http2/h2_proxy_session.c   modules/http2/h2_proxy_util.c
+  )
+***************
+*** 746,753 ****
+  
+      # Extra defines?
+      SET(mod_extra_defines "${mod_name}_extra_defines")
+!     IF(NOT ${${mod_extra_defines}} STREQUAL "")
+!       SET_TARGET_PROPERTIES(${mod_name} PROPERTIES COMPILE_DEFINITIONS ${${mod_extra_defines}})
+      ENDIF()
+  
+      # Extra includes?
+--- 747,757 ----
+  
+      # Extra defines?
+      SET(mod_extra_defines "${mod_name}_extra_defines")
+!     LIST(LENGTH ${mod_extra_defines} n) 
+!     IF(${mod_extra_defines})
+!       FOREACH(loop_var ${${mod_extra_defines}})
+!         TARGET_COMPILE_DEFINITIONS(${mod_name} PUBLIC ${loop_var})
+!       ENDFOREACH()
+      ENDIF()
+  
+      # Extra includes?
