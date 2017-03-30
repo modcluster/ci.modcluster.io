@@ -19,6 +19,8 @@ echo Creating '%COMPUTERNAME%' SSL certificates...
 mkdir %HTTPD_SERVER_ROOT%\conf\ssl\certs
 mkdir %HTTPD_SERVER_ROOT%\conf\ssl\private
 
+pushd %HTTPD_SERVER_ROOT%\bin
+
 set "SSL_CERT=%HTTPD_SERVER_ROOT%\conf\ssl\certs\%COMPUTERNAME%.crt"
 set "SSL_PKEY=%HTTPD_SERVER_ROOT%\conf\ssl\private\%COMPUTERNAME%.key"
 openssl genrsa -rand 2048>"%SSL_PKEY%"
