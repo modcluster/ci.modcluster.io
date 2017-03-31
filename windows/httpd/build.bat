@@ -156,12 +156,14 @@ if "%arch%" equ "64" (
     copy /Y "C:\Program Files (x86)\Windows Kits\10\bin\x64\ucrt\ucrtbased.dll" %CMAKE_INSTALL_PREFIX%\bin\ucrtbased.dll
     copy /Y "C:\Program Files (x86)\Windows Kits\10\Redist\ucrt\DLLs\x64\api-ms-win-crt-stdio-l1-1-0.dll" %CMAKE_INSTALL_PREFIX%\bin\api-ms-win-crt-stdio-l1-1-0.dll
     copy /Y "C:\Program Files (x86)\Windows Kits\10\Redist\ucrt\DLLs\x64\api-ms-win-crt-runtime-l1-1-0.dll" %CMAKE_INSTALL_PREFIX%\bin\api-ms-win-crt-runtime-l1-1-0.dll
+    copy /Y "C:\Program Files (x86)\Windows Kits\10\Redist\ucrt\DLLs\x64\api-ms-win-crt-convert-l1-1-0.dll" %CMAKE_INSTALL_PREFIX%\bin\api-ms-win-crt-convert-l1-1-0.dll
 ) else (
     copy /Y "C:\Program Files (x86)\Microsoft Visual Studio 14.0\VC\redist\x86\Microsoft.VC140.CRT\vcruntime140.dll" %CMAKE_INSTALL_PREFIX%\bin\VCRUNTIME140.dll
     copy /Y "C:\Program Files (x86)\Microsoft Visual Studio 14.0\VC\redist\debug_nonredist\x86\Microsoft.VC140.DebugCRT\vcruntime140d.dll" %CMAKE_INSTALL_PREFIX%\bin\VCRUNTIME140D.dll
     copy /Y "C:\Program Files (x86)\Windows Kits\10\bin\x86\ucrt\ucrtbased.dll" %CMAKE_INSTALL_PREFIX%\bin\ucrtbased.dll
     copy /Y "C:\Program Files (x86)\Windows Kits\10\Redist\ucrt\DLLs\x86\api-ms-win-crt-stdio-l1-1-0.dll" %CMAKE_INSTALL_PREFIX%\bin\api-ms-win-crt-stdio-l1-1-0.dll
     copy /Y "C:\Program Files (x86)\Windows Kits\10\Redist\ucrt\DLLs\x86\api-ms-win-crt-runtime-l1-1-0.dll" %CMAKE_INSTALL_PREFIX%\bin\api-ms-win-crt-runtime-l1-1-0.dll
+    copy /Y "C:\Program Files (x86)\Windows Kits\10\Redist\ucrt\DLLs\x86\api-ms-win-crt-convert-l1-1-0.dll" %CMAKE_INSTALL_PREFIX%\bin\api-ms-win-crt-convert-l1-1-0.dll
 )
 
 REM Symlinks to satisfy different lookups in libraries. This could be probably fixed... (TODO)
