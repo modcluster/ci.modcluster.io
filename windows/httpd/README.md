@@ -17,4 +17,10 @@ See the LICENSE, COPYING, NOTICE or README files packaged in the directory ```.\
  * Open command prompt (cmd), cd into the directory where the zip archive was extracted and run:
  * ```postinstall.bat```
 
+The aforementioned ```postinstall.bat```
+ * downloads and installs [Microsoft Visual C++ Redistributable libraries](https://www.microsoft.com/en-us/download/details.aspx?id=53587) from Microsoft website
+ * configures httpd's paths
+ * generates *test* certificates and configures https://localhost for you
+
+The following section is generated and it is parsed by the ```postinstall.bat``` script.
 # Component versions
