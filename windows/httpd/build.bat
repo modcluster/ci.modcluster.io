@@ -149,6 +149,13 @@ copy /Y %WORKSPACE%\dependencies\zlib\include\* %CMAKE_INSTALL_PREFIX%\include\z
 copy /Y %WORKSPACE%\dependencies\zlib\*.h %CMAKE_INSTALL_PREFIX%\include\zlib\
 copy /Y %WORKSPACE%\dependencies\zlib\README %CMAKE_INSTALL_PREFIX%\licenses\zlib-README
 
+REM VCRUNTIME Debug (not contained in Visual Studio redistributables)
+if "%arch%" equ "64" (
+    copy /Y "C:\Program Files (x86)\Microsoft Visual Studio 14.0\VC\redist\debug_nonredist\x64\Microsoft.VC140.DebugCRT\vcruntime140d.dll" %CMAKE_INSTALL_PREFIX%\bin\vcruntime140d.dll
+) else (
+    copy /Y "C:\Program Files (x86)\Microsoft Visual Studio 14.0\VC\redist\debug_nonredist\x86\Microsoft.VC140.DebugCRT\vcruntime140d.dll" %CMAKE_INSTALL_PREFIX%\bin\vcruntime140d.dll
+)
+
 REM Symlinks to satisfy different lookups in libraries. This could be probably fixed... (TODO)
 REM TODO LIBBZ2.dll versus bz2.dll
 pushd %CMAKE_INSTALL_PREFIX%\bin
