@@ -8,6 +8,7 @@ See the LICENSE, COPYING, NOTICE or README files packaged in the directory ```.\
 ### Prerequisites
 
  * powershell on your PATH
+ * up-to-date Windows 2012 R2 server or newer
 
 ### Installation steps
 
@@ -16,6 +17,11 @@ See the LICENSE, COPYING, NOTICE or README files packaged in the directory ```.\
    * beware of UAC when installing into restricted locations (e.g. ```Program Files```)
  * Open command prompt (cmd), cd into the directory where the zip archive was extracted and run:
  * ```postinstall.bat```
+
+### Start the server
+ * ```cd bin```
+ * ```httpd.exe```
+ * Open [https://localhost/](https://localhost/)
 
 The aforementioned ```postinstall.bat```
  * downloads and installs [Microsoft Visual C++ Redistributable libraries](https://www.microsoft.com/en-us/download/details.aspx?id=53587) from Microsoft website

@@ -1,5 +1,6 @@
 REM @author: Michal Karm Babacek <karm@fedoraproject.org>
 REM postinstall script to setup your httpd instance
+REM TODO: Given the amount of PowerShell here, we shold transform it from .bat to pure .ps
 
 set HTTPD_SERVER_ROOT=%cd%
 set HTTPD_SERVER_ROOT_POSIX=%HTTPD_SERVER_ROOT:\=/%
