@@ -8,16 +8,14 @@ set HTTPD_SERVER_ROOT_POSIX=%HTTPD_SERVER_ROOT:\=/%
 REM Visual Studio redistributables
 REM Needed libraries will be downloaded and installed quietly.
 REM Go to https://www.microsoft.com/en-us/download/details.aspx?id=53587 for more information
-set downloadCommand= ^
-$c = New-Object System.Net.WebClient; ^
+set installCommand= ^
 if(@( Get-Content %HTTPD_SERVER_ROOT%\README.md ^| Where-Object { $_.Contains(' for x64') } ).Count -gt 0) { ^
- $url = 'https://download.microsoft.com/download/6/D/F/6DF3FF94-F7F9-4F0B-838C-A328D1A7D0EE/vc_redist.x64.exe'; $file = '%HTTPD_SERVER_ROOT%\bin\vc_redist.x64.exe'; ^
+ $file = '%HTTPD_SERVER_ROOT%\bin\vc_redist.x64.exe'; ^
 } else { ^
- $url = 'https://download.microsoft.com/download/6/D/F/6DF3FF94-F7F9-4F0B-838C-A328D1A7D0EE/vc_redist.x86.exe'; $file = '%HTTPD_SERVER_ROOT%\bin\vc_redist.x86.exe'; ^
+ $file = '%HTTPD_SERVER_ROOT%\bin\vc_redist.x86.exe'; ^
 } ^
-$c.DownloadFile($url, $file); start-process -FilePath \"$file\" -ArgumentList '/install /quiet' -Verb RunAs
-powershell -Command "%downloadCommand%"
-
+start-process -FilePath \"$file\" -ArgumentList '/install /quiet' -Verb RunAs
+powershell -Command "%installCommand%"
 
 powershell -Command "(gc %HTTPD_SERVER_ROOT%\conf\httpd.conf) -replace '# LoadModule socache_shmcb_module', 'LoadModule socache_shmcb_module' | Out-File -encoding ascii %HTTPD_SERVER_ROOT%\conf\httpd.conf"
 powershell -Command "(gc %HTTPD_SERVER_ROOT%\conf\httpd.conf) -replace '# LoadModule ssl_module', 'LoadModule ssl_module' | Out-File -encoding ascii %HTTPD_SERVER_ROOT%\conf\httpd.conf"
