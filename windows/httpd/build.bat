@@ -54,8 +54,8 @@ REM CMake worksapce
 mkdir %WORKSPACE%\cmakebuild
 
 REM httpd build install directory
-mkdir %WORKSPACE%\target
-SET "CMAKE_INSTALL_PREFIX=%WORKSPACE%\target"
+mkdir %WORKSPACE%\httpd-%BRANCH_OR_TAG%
+SET "CMAKE_INSTALL_PREFIX=%WORKSPACE%\httpd-%BRANCH_OR_TAG%"
 SET "CMAKE_INSTALL_PREFIX_POSSIX=%CMAKE_INSTALL_PREFIX:\=/%"
 
 cd %WORKSPACE%\cmakebuild
@@ -202,10 +202,23 @@ REM powershell -Command "$cmd='dumpbin.exe /dependents %CMAKE_INSTALL_PREFIX%\bi
 powershell -Command "$cmd='cl.exe 2>&1';Add-Content %CMAKE_INSTALL_PREFIX%\README.md \" * $($(iex $cmd) -match 'Version')\" ;"
 REM IF NOT %ERRORLEVEL% == 0 ( exit 1 )
 
+REM Visual Studio redistributables
+REM Needed libraries will be downloaded and installed quietly.
+REM Go to https://www.microsoft.com/en-us/download/details.aspx?id=53587 for more information
+set downloadCommand= ^
+$c = New-Object System.Net.WebClient; ^
+if(@( Get-Content %CMAKE_INSTALL_PREFIX%\README.md ^| Where-Object { $_.Contains(' for x64') } ).Count -gt 0) { ^
+ $url = 'https://download.microsoft.com/download/6/D/F/6DF3FF94-F7F9-4F0B-838C-A328D1A7D0EE/vc_redist.x64.exe'; $file = '%CMAKE_INSTALL_PREFIX%\bin\vc_redist.x64.exe'; ^
+} else { ^
+ $url = 'https://download.microsoft.com/download/6/D/F/6DF3FF94-F7F9-4F0B-838C-A328D1A7D0EE/vc_redist.x86.exe'; $file = '%CMAKE_INSTALL_PREFIX%\bin\vc_redist.x86.exe'; ^
+} ^
+$c.DownloadFile($url, $file);
+powershell -Command "%downloadCommand%"
+
 REM Package the big, devel package
-pushd %CMAKE_INSTALL_PREFIX%
+pushd %WORKSPACE%
 SET HTTPD_DEVEL_ZIP_PATH=%WORKSPACE%\httpd-%BRANCH_OR_TAG%-win.%arch%-devel.zip
-zip -r -9 %HTTPD_DEVEL_ZIP_PATH% .
+zip -r -9 %HTTPD_DEVEL_ZIP_PATH% httpd-%BRANCH_OR_TAG%
 IF NOT %ERRORLEVEL% == 0 ( exit 1 )
 popd
 
@@ -216,11 +229,12 @@ REM
 mkdir %WORKSPACE%\tmp\
 pushd %WORKSPACE%\tmp\
 unzip %HTTPD_DEVEL_ZIP_PATH%
-IF NOT %ERRORLEVEL% == 0 ( type %HTTPD_SERVER_ROOT%\logs\error_log & exit 1 )
+IF NOT %ERRORLEVEL% == 0 ( echo "Unzip failed." & exit 1 )
+pushd httpd-%BRANCH_OR_TAG%
 dir
 call postinstall.bat
 set HTTPD_SERVER_ROOT=%cd%
-pushd %WORKSPACE%\tmp\bin
+pushd bin
 start cmd /C httpd.exe
 powershell -Command "Start-Sleep -s 1"
 ab.exe http://localhost:80/
@@ -254,13 +268,14 @@ powershell -Command "if(@( Get-Content %HTTPD_SERVER_ROOT%\logs\error_log | Wher
 IF NOT %ERRORLEVEL% == 0 ( type %HTTPD_SERVER_ROOT%\logs\error_log & exit 1 )
 popd
 popd
+popd
 
 echo Wait 10s
 powershell -Command "Start-Sleep -s 10"
 
 REM Prepare trimmed package
-mkdir %WORKSPACE%\target-trimmed\
-pushd %WORKSPACE%\target-trimmed\
+mkdir %WORKSPACE%\httpd-%BRANCH_OR_TAG%-trimmed\
+pushd %WORKSPACE%\httpd-%BRANCH_OR_TAG%-trimmed\
 unzip %HTTPD_DEVEL_ZIP_PATH%
 IF NOT %ERRORLEVEL% == 0 ( exit 1 )
 rmdir /s /q conf\original
@@ -279,9 +294,10 @@ mkdir %WORKSPACE%\tmp-trimmed\
 pushd %WORKSPACE%\tmp-trimmed\
 unzip %HTTPD_ZIP_PATH%
 IF NOT %ERRORLEVEL% == 0 ( exit 1 )
+pushd httpd-%BRANCH_OR_TAG%
 call postinstall.bat
 set HTTPD_SERVER_ROOT=%cd%
-pushd %WORKSPACE%\tmp-trimmed\bin
+pushd bin
 start cmd /C httpd.exe
 powershell -Command "Start-Sleep -s 1"
 ab.exe http://localhost:80/
@@ -313,6 +329,7 @@ IF NOT %ERRORLEVEL% == 0 ( type %HTTPD_SERVER_ROOT%\logs\error_log & exit 1 )
 taskkill /im httpd.exe /F
 powershell -Command "if(@( Get-Content %HTTPD_SERVER_ROOT%\logs\error_log | Where-Object { $_.Contains('error') -or $_.Contains('fault') -or $_.Contains('mismatch') } ).Count -gt 0) { exit 1 } else {exit 0 }"
 IF NOT %ERRORLEVEL% == 0 ( type %HTTPD_SERVER_ROOT%\logs\error_log & exit 1 )
+popd
 popd
 popd
 
