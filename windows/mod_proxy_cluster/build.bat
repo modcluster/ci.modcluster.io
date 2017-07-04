@@ -29,6 +29,9 @@ IF "%DISTRO%" equ "jboss" (
     IF NOT %ERRORLEVEL% == 0 ( exit 1 )
 )
 
+REM Remove old artifacts
+del /Q /F %WORKSPACE%\mod_proxy_cluster*.zip
+
 REM Note that some attributes cannot handle backslashes...
 SET WORKSPACE_POSSIX=%WORKSPACE:\=/%
 
