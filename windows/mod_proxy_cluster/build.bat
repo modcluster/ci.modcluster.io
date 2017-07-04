@@ -94,7 +94,7 @@ IF "%DISTRO%" equ "jboss" (
 ) else (
     copy /Y %WORKSPACE%\cmakebuild\modules\mod_*.so %HTTPD_DEV_HOME%\modules\
     copy /Y %WORKSPACE%\ci-scripts\windows\mod_proxy_cluster\mod_cluster.conf %HTTPD_DEV_HOME%\conf\extra\
-    echo Include conf/extra/mod_cluster.conf> %HTTPD_DEV_HOME%\conf\httpd.conf
+    echo Include conf/extra/mod_cluster.conf>> %HTTPD_DEV_HOME%\conf\httpd.conf
 
     set "cfgcmd=(gc %HTTPD_DEV_HOME%\conf\extra\mod_cluster.conf) -replace '@HTTPD_SERVER_ROOT_POSIX@/cache', 'c:/Apache24/logs' | Out-File -Encoding ascii %HTTPD_DEV_HOME%\conf\extra\mod_cluster.conf;"
     set "cfgcmd=!cfgcmd!get-childitem %HTTPD_DEV_HOME% -include *.conf -recurse | ForEach {(Get-Content $_ | ForEach { $_ -replace 'c:/Apache24', '%HTTPD_DEV_HOME_POSSIX%'}) | Set-Content -Encoding ascii $_ };"
