@@ -1,10 +1,6 @@
-REM Architecture
-if "%arch%" equ "64" (
-    call vcvars64
-) else (
-    set "PATH=C:\Program Files (x86)\Microsoft Visual Studio 14.0\VC\bin;%PATH%"
-    call vcvars32
-)
+REM Build environment
+set "PATH=C:\Program Files (x86)\Microsoft Visual Studio\2017\Community\VC\Auxiliary\Build;%PATH%"
+call vcvars%arch%
 
 REM Dependencies
 REM We rely on label being the same. It is probably for the best, gonna keep the same MSVC...
