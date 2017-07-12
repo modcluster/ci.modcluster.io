@@ -31,6 +31,7 @@ IF "%DISTRO%" equ "jboss" (
 
 REM Remove old artifacts
 del /Q /F %WORKSPACE%\mod_proxy_cluster*.zip
+del /Q /F %WORKSPACE%\mod_proxy_cluster*.zip.sha1
 
 REM Note that some attributes cannot handle backslashes...
 SET WORKSPACE_POSSIX=%WORKSPACE:\=/%
@@ -117,11 +118,11 @@ IF "%DISTRO%" equ "jboss" (
 
 pushd %HTTPD_DEV_HOME%\bin
 
-start cmd /C httpd.exe
+start cmd /C httpd.exe>%HTTPD_DEV_HOME%\logs\run.log
 REM If it doesn't start under 1 s, you are fired.
 powershell -Command "Start-Sleep -s 1"
 ab.exe http://localhost:80/
-IF NOT %ERRORLEVEL% == 0 ( type %HTTPD_DEV_HOME%\logs\error_log & exit 1 )
+IF NOT %ERRORLEVEL% == 0 ( type %HTTPD_DEV_HOME%\logs\run.log & type %HTTPD_DEV_HOME%\logs\error_log & exit 1 )
 
 REM Play fake worker node and send configuration messages to Apache HTTP Server
 set testcommand= ^
@@ -140,7 +141,7 @@ powershell -Command "%testcommand%"
 
 REM Test that Apache HTTP Server registered this fake "worker"
 powershell -Command "for ($j=0; $j -lt 10; $j++) {$url = 'http://localhost:6666/mod_cluster_manager'; $web = New-Object Net.WebClient; [System.Net.ServicePointManager]::ServerCertificateValidationCallback = { $true }; $output = $web.DownloadString($url); [System.Net.ServicePointManager]::ServerCertificateValidationCallback = $null; if ($output -like '*Node fake-worker-1*') { echo 'ok' } else { exit 1 }}; exit 0"
-IF NOT %ERRORLEVEL% == 0 ( exit 1 )
+IF NOT %ERRORLEVEL% == 0 ( type %HTTPD_DEV_HOME%\logs\error_log & exit 1 )
 
 taskkill /im httpd.exe /F
 
