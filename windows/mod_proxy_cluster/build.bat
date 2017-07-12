@@ -89,11 +89,20 @@ REM On the other hand, running the whole NOE TS is an overkill. This build job m
 REM Test
 
 SET HTTPD_DEV_HOME_POSSIX=%HTTPD_DEV_HOME:\=/%
-
+REM TODO: Merge these if-else branches as much as possible.
 IF "%DISTRO%" equ "jboss" (
-    echo NOT IMPLEMENTED TODO
-    exit 1
+    REM We test with prod, not dev version of httpd
+    SET HTTPD_DEV_HOME=%WORKSPACE%\httpd-prod\httpd-%JBOSS_HTTPD_VERSION%
+    SET HTTPD_DEV_HOME_POSSIX=!HTTPD_DEV_HOME:\=/!
+    copy /Y %WORKSPACE%\ci-scripts\windows\mod_proxy_cluster\mod_cluster.conf !HTTPD_DEV_HOME!\conf\extra\
+    echo Include conf/extra/mod_cluster.conf>> !HTTPD_DEV_HOME!\conf\httpd.conf
 
+    set "cfgcmd=!cfgcmd!(gc !HTTPD_DEV_HOME!\conf\httpd.conf) -replace '#\s*LoadModule proxy_module', 'LoadModule proxy_module' | Out-File -Encoding ascii !HTTPD_DEV_HOME!\conf\httpd.conf;"
+    set "cfgcmd=!cfgcmd!(gc !HTTPD_DEV_HOME!\conf\httpd.conf) -replace '#\s*LoadModule proxy_ajp_module', 'LoadModule proxy_ajp_module' | Out-File -Encoding ascii !HTTPD_DEV_HOME!\conf\httpd.conf"
+    powershell -Command "!cfgcmd!"
+    pushd !HTTPD_DEV_HOME!
+    call postinstall.bat
+    popd
 ) else (
     copy /Y %WORKSPACE%\cmakebuild\modules\mod_*.so %HTTPD_DEV_HOME%\modules\
     copy /Y %WORKSPACE%\ci-scripts\windows\mod_proxy_cluster\mod_cluster.conf %HTTPD_DEV_HOME%\conf\extra\
@@ -166,8 +175,8 @@ copy /Y %WORKSPACE%\mod_proxy_cluster\lgpl.txt %WORKSPACE%\%DISTRO_TARGET_DIR%\L
 IF NOT %ERRORLEVEL% == 0 ( exit 1 )
 
 IF "%DISTRO%" equ "jboss" (
-    echo NOT IMPLEMENTED TODO
-    exit 1
+    copy /Y %WORKSPACE%\ci-scripts\windows\mod_proxy_cluster\README_jboss_httpd.md %WORKSPACE%\%DISTRO_TARGET_DIR%\README.md
+    IF NOT %ERRORLEVEL% == 0 ( exit 1 )
 ) else (
     copy /Y %WORKSPACE%\ci-scripts\windows\mod_proxy_cluster\README_apachelounge.md %WORKSPACE%\%DISTRO_TARGET_DIR%\README.md
     IF NOT %ERRORLEVEL% == 0 ( exit 1 )
