@@ -231,7 +231,7 @@ dir
 call postinstall.bat
 set HTTPD_SERVER_ROOT=%cd%
 pushd bin
-start cmd /C httpd.exe
+start /B cmd /C httpd.exe
 powershell -Command "Start-Sleep -s 1"
 ab.exe http://localhost:80/
 IF NOT %ERRORLEVEL% == 0 ( type %HTTPD_SERVER_ROOT%\logs\error_log & exit 1 )
@@ -253,7 +253,7 @@ powershell -Command "(gc %HTTPD_SERVER_ROOT%\conf\httpd.conf) -replace 'LoadModu
 IF NOT %ERRORLEVEL% == 0 ( type %HTTPD_SERVER_ROOT%\logs\error_log & exit 1 )
 mkdir %HTTPD_SERVER_ROOT%\docs\dummy-host.example.com
 mkdir %HTTPD_SERVER_ROOT%\docs\dummy-host2.example.com
-start cmd /C httpd.exe
+start /B cmd /C httpd.exe
 powershell -Command "Start-Sleep -s 1"
 ab.exe http://localhost:80/
 IF NOT %ERRORLEVEL% == 0 ( type %HTTPD_SERVER_ROOT%\logs\error_log & exit 1 )
@@ -294,7 +294,7 @@ pushd httpd-%BRANCH_OR_TAG%
 call postinstall.bat
 set HTTPD_SERVER_ROOT=%cd%
 pushd bin
-start cmd /C httpd.exe
+start /B cmd /C httpd.exe
 powershell -Command "Start-Sleep -s 1"
 ab.exe http://localhost:80/
 IF NOT %ERRORLEVEL% == 0 ( type %HTTPD_SERVER_ROOT%\logs\error_log & exit 1 )
@@ -316,7 +316,7 @@ powershell -Command "(gc %HTTPD_SERVER_ROOT%\conf\httpd.conf) -replace 'LoadModu
 IF NOT %ERRORLEVEL% == 0 ( exit 1 )
 mkdir %HTTPD_SERVER_ROOT%\docs\dummy-host.example.com
 mkdir %HTTPD_SERVER_ROOT%\docs\dummy-host2.example.com
-start cmd /C httpd.exe
+start /B cmd /C httpd.exe
 powershell -Command "Start-Sleep -s 1"
 ab.exe http://localhost:80/
 IF NOT %ERRORLEVEL% == 0 ( type %HTTPD_SERVER_ROOT%\logs\error_log & exit 1 )
