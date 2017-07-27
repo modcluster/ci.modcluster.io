@@ -95,6 +95,7 @@ IF "%DISTRO%" equ "jboss" (
     REM We test with prod, not dev version of httpd
     SET HTTPD_DEV_HOME=%WORKSPACE%\httpd-prod\httpd-%JBOSS_HTTPD_VERSION%
     SET HTTPD_DEV_HOME_POSSIX=!HTTPD_DEV_HOME:\=/!
+    copy /Y %WORKSPACE%\cmakebuild\modules\mod_*.so !HTTPD_DEV_HOME!\modules\
     copy /Y %WORKSPACE%\ci-scripts\windows\mod_proxy_cluster\mod_cluster.conf !HTTPD_DEV_HOME!\conf\extra\
     echo Include conf/extra/mod_cluster.conf>> !HTTPD_DEV_HOME!\conf\httpd.conf
 
@@ -118,11 +119,11 @@ IF "%DISTRO%" equ "jboss" (
 
 pushd %HTTPD_DEV_HOME%\bin
 
-start cmd /C httpd.exe>%HTTPD_DEV_HOME%\logs\run.log
+start /B cmd /C httpd.exe -e Debug
 REM If it doesn't start under 1 s, you are fired.
 powershell -Command "Start-Sleep -s 1"
 ab.exe http://localhost:80/
-IF NOT %ERRORLEVEL% == 0 ( type %HTTPD_DEV_HOME%\logs\run.log & type %HTTPD_DEV_HOME%\logs\error_log & exit 1 )
+IF NOT %ERRORLEVEL% == 0 ( type %HTTPD_DEV_HOME%\logs\error_log & exit 1 )
 
 REM Play fake worker node and send configuration messages to Apache HTTP Server
 set testcommand= ^
