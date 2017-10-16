@@ -7,25 +7,25 @@ SetLocal EnableDelayedExpansion
 
 REM Build environment
 set "PATH=C:\Program Files (x86)\Microsoft Visual Studio\2017\Community\VC\Auxiliary\Build;%PATH%"
-call vcvars%arch%
+call vcvars64
 
 REM Dependencies
 IF "%DISTRO%" equ "jboss" (
     REM We rely on label being the same. It is probably for the best, gonna keep the same MSVC...
     REM httpd
     del /s /f /q httpd-devel
-    unzip .\httpd\arch=%arch%,label=%label%\httpd*%arch%-devel.zip -d httpd-devel
+    unzip .\httpd\arch=64,label=%label%\httpd*64-devel.zip -d httpd-devel
     IF NOT %ERRORLEVEL% == 0 ( exit 1 )
     del /s /f /q httpd-prod
-    unzip .\httpd\arch=%arch%,label=%label%\httpd*%arch%.zip -d httpd-prod
+    unzip .\httpd\arch=64,label=%label%\httpd*64.zip -d httpd-prod
     IF NOT %ERRORLEVEL% == 0 ( exit 1 )
 ) else (
     REM Fetch Apache Lounge Apache HTTP Server distribution
-    if not exist httpd-%APACHE_LOUNGE_DISTRO_VERSION%-Win%arch%-VC15.zip (
-        powershell -Command "$c = New-Object System.Net.WebClient; $url = 'http://www.apachelounge.com/download/VC15/binaries/httpd-%APACHE_LOUNGE_DISTRO_VERSION%-Win%arch%-VC15.zip'; $file = '%WORKSPACE%\httpd-%APACHE_LOUNGE_DISTRO_VERSION%-Win%arch%-VC15.zip'; $c.DownloadFile($url, $file);"
+    if not exist httpd-%APACHE_LOUNGE_DISTRO_VERSION%-Win64-VC15.zip (
+        powershell -Command "$c = New-Object System.Net.WebClient; $url = 'http://www.apachelounge.com/download/VC15/binaries/httpd-%APACHE_LOUNGE_DISTRO_VERSION%-Win64-VC15.zip'; $file = '%WORKSPACE%\httpd-%APACHE_LOUNGE_DISTRO_VERSION%-Win64-VC15.zip'; $c.DownloadFile($url, $file);"
     )
     del /s /f /q httpd-apache-lounge
-    unzip httpd-%APACHE_LOUNGE_DISTRO_VERSION%-Win%arch%-VC15.zip -d httpd-apache-lounge
+    unzip httpd-%APACHE_LOUNGE_DISTRO_VERSION%-Win64-VC15.zip -d httpd-apache-lounge
     IF NOT %ERRORLEVEL% == 0 ( exit 1 )
 )
 
@@ -49,20 +49,16 @@ IF "%DISTRO%" equ "jboss" (
     SET HTTPD_DEV_HOME=%WORKSPACE%\httpd-apache-lounge\Apache24
     REM It is not a good idea to try to generate the mod_proxy.lib file, so:
 
-    copy /Y %WORKSPACE%\ci-scripts\windows\mod_proxy_cluster\apache_lounge_%APACHE_LOUNGE_DISTRO_VERSION%\win%arch%\mod_proxy.lib !HTTPD_DEV_HOME!\lib\mod_proxy.lib
+    copy /Y %WORKSPACE%\ci-scripts\windows\mod_proxy_cluster\apache_lounge_%APACHE_LOUNGE_DISTRO_VERSION%\win64\mod_proxy.lib !HTTPD_DEV_HOME!\lib\mod_proxy.lib
 
     REM dumpbin /exports /nologo /out:!HTTPD_DEV_HOME!\lib\mod_proxy.def.tmp !HTTPD_DEV_HOME!\modules\mod_proxy.so
     REM IF NOT %ERRORLEVEL% == 0 ( exit 1 )
     REM echo EXPORTS> !HTTPD_DEV_HOME!\lib\mod_proxy.def
     REM powershell -Command "(Get-Content !HTTPD_DEV_HOME!\lib\mod_proxy.def.tmp) ^| Foreach-Object {$_ -replace '.*\s(_?ap_proxy.*^|_?proxy_.*)$','$1'} ^| select-string -pattern '^^_?ap_proxy^|^^_?proxy_' ^| Add-Content !HTTPD_DEV_HOME!\lib\mod_proxy.def"
     REM IF NOT %ERRORLEVEL% == 0 ( exit 1 )
-    REM if "%arch%" equ "64" (
-    REM     lib /def:!HTTPD_DEV_HOME!\lib\mod_proxy.def /OUT:!HTTPD_DEV_HOME!\lib\mod_proxy.lib /MACHINE:X64 /NAME:mod_proxy.so
-    REM     IF NOT %ERRORLEVEL% == 0 ( exit 1 )
-    REM ) else (
-    REM     lib /def:!HTTPD_DEV_HOME!\lib\mod_proxy.def /OUT:!HTTPD_DEV_HOME!\lib\mod_proxy.lib /MACHINE:X86 /NAME:mod_proxy.so
-    REM     IF NOT %ERRORLEVEL% == 0 ( exit 1 )
-    REM )
+    REM lib /def:!HTTPD_DEV_HOME!\lib\mod_proxy.def /OUT:!HTTPD_DEV_HOME!\lib\mod_proxy.lib /MACHINE:X64 /NAME:mod_proxy.so
+    REM IF NOT %ERRORLEVEL% == 0 ( exit 1 )
+
 )
 
 SET HTTPD_DEV_HOME_POSSIX=%HTTPD_DEV_HOME:\=/%
@@ -162,9 +158,9 @@ echo %MOD_PROXY_CLUSTER_VERSION%
 
 REM Prepare the distribution
 IF "%DISTRO%" equ "jboss" (
-    SET DISTRO_TARGET_DIR=mod_proxy_cluster-%MOD_PROXY_CLUSTER_VERSION%-httpd-%JBOSS_HTTPD_VERSION%-win%arch%
+    SET DISTRO_TARGET_DIR=mod_proxy_cluster-%MOD_PROXY_CLUSTER_VERSION%-httpd-%JBOSS_HTTPD_VERSION%-win64
 ) else (
-    SET DISTRO_TARGET_DIR=mod_proxy_cluster-%MOD_PROXY_CLUSTER_VERSION%-apachelounge-%APACHE_LOUNGE_DISTRO_VERSION%-Win%arch%
+    SET DISTRO_TARGET_DIR=mod_proxy_cluster-%MOD_PROXY_CLUSTER_VERSION%-apachelounge-%APACHE_LOUNGE_DISTRO_VERSION%-Win64
 )
 
 mkdir %WORKSPACE%\%DISTRO_TARGET_DIR%\conf\extra
