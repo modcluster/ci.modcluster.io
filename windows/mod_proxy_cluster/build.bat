@@ -213,5 +213,13 @@ sha1sum.exe %DISTRO_TARGET_DIR%.zip>%DISTRO_TARGET_DIR%.zip.sha1
 
 popd
 
+IF "%RUN_STATIC_ANALYSIS%" equ "true" (
+    REM use --force to expand all levels of all macros, kinda slow (single digit minutes even with such a small project)
+    cppcheck --enable=all --inconclusive --std=c99 ^
+    -I%HTTPD_DEV_HOME_POSSIX%/include/ ^
+    -I%WORKSPACE_POSSIX%/mod_proxy_cluster/native/include/ ^
+    --output-file=cppcheck.log %WORKSPACE_POSSIX%/mod_proxy_cluster/native/
+)
+
 tree /f /a
 echo Done.
