@@ -6,7 +6,7 @@ REM @echo off
 SetLocal EnableDelayedExpansion
 
 REM Build environment
-set "PATH=C:\Program Files (x86)\Microsoft Visual Studio\2017\Community\VC\Auxiliary\Build;%PATH%"
+set "PATH=C:\Program Files (x86)\Microsoft Visual Studio\2017\Community\VC\Auxiliary\Build;C:\Program Files\Cppcheck;%PATH%"
 call vcvars64
 
 REM Dependencies
