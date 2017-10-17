@@ -18,7 +18,8 @@ cd %WORKSPACE%\build-64
 REM Note that some attributes cannot handle backslashes...
 SET WORKSPACEPOSSIX=%WORKSPACE:\=/%
 
-cmake -G "NMake Makefiles" -DAPR_INCLUDE_DIR=%WORKSPACEPOSSIX%/apr/include/ ^
+cmake -G "NMake Makefiles" -DCMAKE_BUILD_TYPE=Release -DCMAKE_C_FLAGS_RELEASE="/O2 /Wall /Zi" -DCMAKE_CXX_FLAGS_RELEASE="/O2 /Wall /Zi" ^
+-DAPR_INCLUDE_DIR=%WORKSPACEPOSSIX%/apr/include/ ^
 -DAPR_LIBRARIES=%WORKSPACEPOSSIX%/apr/lib/libapr-1.lib;%WORKSPACEPOSSIX%/apr/lib/libaprapp-1.lib ^
 -DOPENSSL_ROOT_DIR=%WORKSPACEPOSSIX%/openssl/ -DAPU_HAVE_CRYPTO=ON -DAPU_HAVE_ODBC=ON ^
 -DAPU_HAVE_OPENSSL=ON -DINSTALL_PDB=ON -DAPR_BUILD_TESTAPR=ON ^
@@ -47,7 +48,7 @@ sha1sum.exe %WORKSPACE%\apr-util-%TAGNAME%-64.zip>%WORKSPACE%\apr-util-%TAGNAME%
 
 IF "%RUN_STATIC_ANALYSIS%" equ "true" (
     REM use --force to expand all levels of all macros, kinda slow (single digit minutes even with such a small project)
-    cppcheck --enable=all --inconclusive --std=c99 ^
+    cppcheck --enable=all --inconclusive --std=c89 ^
     -I%WORKSPACEPOSSIX%/apr/include/ ^
     --output-file=cppcheck.log %WORKSPACEPOSSIX%
 )

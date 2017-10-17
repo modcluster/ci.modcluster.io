@@ -1,0 +1,33 @@
+From 3dee0544be824f9ef4da9f7e13b3c7f7367ee193 Mon Sep 17 00:00:00 2001
+From: Michal Karm Babacek <karm@fedoraproject.org>
+Date: Mon, 6 Feb 2017 04:29:30 -0800
+Subject: [PATCH] Win32
+
+---
+ expat/CMakeLists.txt | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/expat/CMakeLists.txt b/expat/CMakeLists.txt
+index 349f7aa..633957a 100755
+--- a/expat/CMakeLists.txt
++++ b/expat/CMakeLists.txt
+@@ -93,7 +93,7 @@ install(FILES lib/expat.h lib/expat_external.h DESTINATION include)
+ install(FILES ${CMAKE_CURRENT_BINARY_DIR}/expat.pc DESTINATION lib/pkgconfig)
+
+
+-add_custom_command(TARGET expat PRE_BUILD COMMAND $(MAKE) -C doc xmlwf.1)
++#add_custom_command(TARGET expat PRE_BUILD COMMAND $(MAKE) -C doc xmlwf.1)
+
+ if(BUILD_tools AND NOT WINCE)
+     set(xmlwf_SRCS
+@@ -107,7 +107,7 @@ if(BUILD_tools AND NOT WINCE)
+     set_property(TARGET xmlwf PROPERTY RUNTIME_OUTPUT_DIRECTORY xmlwf)
+     target_link_libraries(xmlwf expat)
+     install(TARGETS xmlwf DESTINATION bin)
+-    install(FILES doc/xmlwf.1 DESTINATION share/man/man1)
++#   install(FILES doc/xmlwf.1 DESTINATION share/man/man1)
+ endif(BUILD_tools AND NOT WINCE)
+
+ if(BUILD_examples)
+--
+2.9.0.windows.1

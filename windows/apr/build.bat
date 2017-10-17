@@ -16,7 +16,8 @@ cd %WORKSPACE%\build-64
 REM Note that some attributes cannot handle backslashes...
 SET WORKSPACEPOSSIX=%WORKSPACE:\=/%
 
-cmake -G "NMake Makefiles" -DAPU_USE_EXPAT=OFF -DAPU_USE_LIBXML2=ON ^
+cmake -G "NMake Makefiles" -DCMAKE_BUILD_TYPE=Release -DCMAKE_C_FLAGS_RELEASE="/O2 /Wall /Zi" -DCMAKE_CXX_FLAGS_RELEASE="/O2 /Wall /Zi" ^
+-DAPU_USE_EXPAT=OFF -DAPU_USE_LIBXML2=ON ^
 -DLIBXML2_INCLUDE_DIR=%WORKSPACEPOSSIX%/libxml2/include/libxml2 ^
 -DLIBXML2_LIBRARIES=%WORKSPACEPOSSIX%/libxml2/lib/libxml2.lib;^
 %WORKSPACEPOSSIX%/libxml2/lib/libxml2_a.lib;%WORKSPACEPOSSIX%/libxml2/lib/libxml2_a_dll.lib ^
@@ -49,7 +50,7 @@ sha1sum.exe %WORKSPACE%\apr-%TAGNAME%-64.zip>%WORKSPACE%\apr-%TAGNAME%-64.zip.sh
 
 IF "%RUN_STATIC_ANALYSIS%" equ "true" (
     REM use --force to expand all levels of all macros, kinda slow (single digit minutes even with such a small project)
-    cppcheck --enable=all --inconclusive --std=c99 ^
+    cppcheck --enable=all --inconclusive --std=c89 ^
     -I%WORKSPACEPOSSIX%/libxml2/include/libxml2 ^
     -I%WORKSPACEPOSSIX%/libxml2/include/ ^
     --output-file=cppcheck.log %WORKSPACEPOSSIX%
