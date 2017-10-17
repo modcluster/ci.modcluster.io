@@ -16,7 +16,7 @@ cd %WORKSPACE%\build-64
 REM Note that some attributes cannot handle backslashes...
 SET WORKSPACEPOSSIX=%WORKSPACE:\=/%
 
-cmake -G "NMake Makefiles" -DCMAKE_BUILD_TYPE=Release -DCMAKE_C_FLAGS_RELEASE="/O2 /Wall /Zi" ^
+cmake -G "NMake Makefiles" -DCMAKE_BUILD_TYPE=Release ^
 -DAPU_USE_EXPAT=OFF -DAPU_USE_LIBXML2=ON ^
 -DLIBXML2_INCLUDE_DIR=%WORKSPACEPOSSIX%/libxml2/include/libxml2 ^
 -DLIBXML2_LIBRARIES=%WORKSPACEPOSSIX%/libxml2/lib/libxml2.lib;^
