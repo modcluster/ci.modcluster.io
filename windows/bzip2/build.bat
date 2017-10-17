@@ -7,7 +7,7 @@ REM Build environment
 set "PATH=C:\Program Files (x86)\Microsoft Visual Studio\2017\Community\VC\Auxiliary\Build;C:\Program Files\Cppcheck;%PATH%"
 call vcvars64
 cd %WORKSPACE%\target\64
-cmake -G "NMake Makefiles" -DCMAKE_BUILD_TYPE=Release -DCMAKE_C_FLAGS_RELEASE="/O2 /Wall /Zi" -DCMAKE_CXX_FLAGS_RELEASE="/O2 /Wall /Zi" ^
+cmake -G "NMake Makefiles" -DCMAKE_BUILD_TYPE=Release -DCMAKE_C_FLAGS_RELEASE="/O2 /Wall /Zi" ^
 %WORKSPACE%\
 nmake
 copy %WORKSPACE%\LICENSE .

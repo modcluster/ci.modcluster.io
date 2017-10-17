@@ -12,8 +12,8 @@ cd %WORKSPACE%\expat\build-64
 
 SET WORKSPACEPOSSIX=%WORKSPACE:\=/%
 
-patch.exe --verbose -p1 %WORKSPACE%\CMakeLists.txt -i %WORKSPACE%\ci-scripts\windows\libexpat\libexpat-win-CMakeLists.patch
-cmake -G "NMake Makefiles" -DCMAKE_BUILD_TYPE=Release -DCMAKE_C_FLAGS_RELEASE="/O2 /Wall /Zi" -DCMAKE_CXX_FLAGS_RELEASE="/O2 /Wall /Zi" ^
+patch.exe --verbose -p1 %WORKSPACE%\expat\CMakeLists.txt -i %WORKSPACE%\ci-scripts\windows\libexpat\libexpat-win-CMakeLists.patch
+cmake -G "NMake Makefiles" -DCMAKE_BUILD_TYPE=Release -DCMAKE_C_FLAGS_RELEASE="/O2 /Wall /Zi" ^
 -DBUILD_tests=OFF -DBUILD_shared=ON -DCMAKE_INSTALL_PREFIX=%WORKSPACEPOSSIX%/target/64/ ..
 
 nmake

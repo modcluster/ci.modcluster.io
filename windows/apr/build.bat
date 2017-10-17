@@ -16,7 +16,7 @@ cd %WORKSPACE%\build-64
 REM Note that some attributes cannot handle backslashes...
 SET WORKSPACEPOSSIX=%WORKSPACE:\=/%
 
-cmake -G "NMake Makefiles" -DCMAKE_BUILD_TYPE=Release -DCMAKE_C_FLAGS_RELEASE="/O2 /Wall /Zi" -DCMAKE_CXX_FLAGS_RELEASE="/O2 /Wall /Zi" ^
+cmake -G "NMake Makefiles" -DCMAKE_BUILD_TYPE=Release -DCMAKE_C_FLAGS_RELEASE="/O2 /Wall /Zi" ^
 -DAPU_USE_EXPAT=OFF -DAPU_USE_LIBXML2=ON ^
 -DLIBXML2_INCLUDE_DIR=%WORKSPACEPOSSIX%/libxml2/include/libxml2 ^
 -DLIBXML2_LIBRARIES=%WORKSPACEPOSSIX%/libxml2/lib/libxml2.lib;^
@@ -45,8 +45,11 @@ copy %WORKSPACE%\CHANGES %WORKSPACE%\target\64\
 
 cd %WORKSPACE%\target\64
 
-zip -r -9 %WORKSPACE%\apr-%TAGNAME%-64.zip .
-sha1sum.exe %WORKSPACE%\apr-%TAGNAME%-64.zip>%WORKSPACE%\apr-%TAGNAME%-64.zip.sha1
+for /f %%x in ('pushd %WORKSPACE% ^& git log --pretty^=format:%%h -n 1 ^& popd') do set GIT_HEAD=%%x
+echo %GIT_HEAD%
+
+zip -r -9 %WORKSPACE%\apr-%BRANCH_OR_TAG%-%GIT_HEAD%-64.zip .
+sha1sum.exe %WORKSPACE%\apr-%BRANCH_OR_TAG%-%GIT_HEAD%-64.zip>%WORKSPACE%\apr-%BRANCH_OR_TAG%-%GIT_HEAD%-64.zip.sha1
 
 IF "%RUN_STATIC_ANALYSIS%" equ "true" (
     REM use --force to expand all levels of all macros, kinda slow (single digit minutes even with such a small project)
