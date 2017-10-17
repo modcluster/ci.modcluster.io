@@ -63,8 +63,7 @@ IF "%DISTRO%" equ "jboss" (
 
 SET HTTPD_DEV_HOME_POSSIX=%HTTPD_DEV_HOME:\=/%
 
-cmake -G "NMake Makefiles" ^
--DCMAKE_BUILD_TYPE=Release ^
+cmake -G "NMake Makefiles" -DCMAKE_BUILD_TYPE=Release -DCMAKE_C_FLAGS_RELEASE="/O2 /Wall /Zi" -DCMAKE_CXX_FLAGS_RELEASE="/O2 /Wall /Zi" ^
 -DAPR_LIBRARY=%HTTPD_DEV_HOME_POSSIX%/lib/libapr-1.lib ^
 -DAPR_INCLUDE_DIR=%HTTPD_DEV_HOME_POSSIX%/include/ ^
 -DAPACHE_INCLUDE_DIR=%HTTPD_DEV_HOME_POSSIX%/include/ ^
@@ -215,7 +214,7 @@ popd
 
 IF "%RUN_STATIC_ANALYSIS%" equ "true" (
     REM use --force to expand all levels of all macros, kinda slow (single digit minutes even with such a small project)
-    cppcheck --enable=all --inconclusive --std=c99 ^
+    cppcheck --enable=all --inconclusive --std=c89 ^
     -I%HTTPD_DEV_HOME_POSSIX%/include/ ^
     -I%WORKSPACE_POSSIX%/mod_proxy_cluster/native/include/ ^
     --output-file=cppcheck.log %WORKSPACE_POSSIX%/mod_proxy_cluster/native/

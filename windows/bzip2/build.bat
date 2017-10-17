@@ -7,7 +7,8 @@ REM Build environment
 set "PATH=C:\Program Files (x86)\Microsoft Visual Studio\2017\Community\VC\Auxiliary\Build;C:\Program Files\Cppcheck;%PATH%"
 call vcvars64
 cd %WORKSPACE%\target\64
-cmake -G "NMake Makefiles" %WORKSPACE%\
+cmake -G "NMake Makefiles" -DCMAKE_BUILD_TYPE=Release -DCMAKE_C_FLAGS_RELEASE="/O2 /Wall /Zi" -DCMAKE_CXX_FLAGS_RELEASE="/O2 /Wall /Zi" ^
+%WORKSPACE%\
 nmake
 copy %WORKSPACE%\LICENSE .
 mkdir include
@@ -18,6 +19,6 @@ sha1sum.exe %WORKSPACE%\bzip2-%LUADIST_BZIP2_VERSION%-64.zip>%WORKSPACE%\bzip2-%
 
 IF "%RUN_STATIC_ANALYSIS%" equ "true" (
     REM use --force to expand all levels of all macros, kinda slow (single digit minutes even with such a small project)
-    cppcheck --enable=all --inconclusive --std=c99 ^
+    cppcheck --enable=all --inconclusive --std=c89 ^
     --output-file=cppcheck.log %WORKSPACE%\
 )
