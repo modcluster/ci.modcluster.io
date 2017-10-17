@@ -16,7 +16,7 @@ cd %WORKSPACE%\build-64
 REM Note that some attributes cannot handle backslashes...
 SET WORKSPACEPOSSIX=%WORKSPACE:\=/%
 
-cmake -G "NMake Makefiles" -DCMAKE_BUILD_TYPE=Release -DCMAKE_C_FLAGS_RELEASE="/Wall /Zi" ^
+cmake -G "NMake Makefiles" -DCMAKE_BUILD_TYPE=Release -DCMAKE_C_FLAGS_RELEASE="/O2 /Wall /Zi" ^
 -DAPU_USE_EXPAT=OFF -DAPU_USE_LIBXML2=ON ^
 -DLIBXML2_INCLUDE_DIR=%WORKSPACEPOSSIX%/libxml2/include/libxml2 ^
 -DLIBXML2_LIBRARIES=%WORKSPACEPOSSIX%/libxml2/lib/libxml2.lib;^
@@ -29,7 +29,7 @@ cmake -G "NMake Makefiles" -DCMAKE_BUILD_TYPE=Release -DCMAKE_C_FLAGS_RELEASE="/
 
 nmake
 
-.\testall.exe testatomic testdir testdso testdup testenv testescape testfile testfilecopy ^
+.\testall.exe -v testatomic testdir testdso testdup testenv testescape testfile testfilecopy ^
 testfileinfo testflock testfmt testfnmatch testargs testhash testipsub testlock testcond ^
 testlfs testmmap testnames testoc testpath testpipe testpoll testpools testproc testprocmutex ^
 testrand testsleep testshm testsock testsockets testsockopt teststr teststrnatcmp testtable ^
