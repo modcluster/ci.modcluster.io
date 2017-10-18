@@ -25,18 +25,22 @@ cmake -G "NMake Makefiles" -DCMAKE_BUILD_TYPE=Release -DCMAKE_C_FLAGS_RELEASE="/
 -DAPR_INCLUDE_DIR=%WORKSPACEPOSSIX%/apr/include/ ^
 -DAPR_LIBRARIES=%WORKSPACEPOSSIX%/apr/lib/libapr-1.lib;%WORKSPACEPOSSIX%/apr/lib/libaprapp-1.lib ^
 -DOPENSSL_ROOT_DIR=%WORKSPACEPOSSIX%/openssl/ -DAPU_HAVE_CRYPTO=ON -DAPU_HAVE_ODBC=ON ^
--DAPU_HAVE_OPENSSL=ON -DINSTALL_PDB=ON -DAPR_BUILD_TESTAPR=ON ^
+-DAPU_HAVE_OPENSSL=ON -DAPU_HAVE_NSS=OFF -DINSTALL_PDB=ON -DAPR_BUILD_TESTAPR=ON ^
 -DCMAKE_INSTALL_PREFIX=%WORKSPACEPOSSIX%/target/64/ ..
 
 nmake
 
 copy %WORKSPACE%\apr\bin\libapr-1.dll .
+copy %WORKSPACE%\libexpat\bin\expat.dll .
+copy %WORKSPACE%\openssl\bin\ssleay32.dll .
+copy %WORKSPACE%\openssl\bin\libeay32.dll .
 
 .\testall.exe
 
 IF NOT %ERRORLEVEL% == 0 ( exit 1 )
 
-del libapr-1.dll /Q
+del libapr-1.dll expat.dll ssleay32.dll libeay32.dl /Q
+
 
 nmake install
 
