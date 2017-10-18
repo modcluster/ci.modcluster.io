@@ -43,8 +43,11 @@ copy %WORKSPACE%\CHANGES %WORKSPACE%\target\64\
 
 cd %WORKSPACE%\target\64
 
-zip -r -9 %WORKSPACE%\apr-util-%TAGNAME%-64.zip .
-sha1sum.exe %WORKSPACE%\apr-util-%TAGNAME%-64.zip>%WORKSPACE%\apr-util-%TAGNAME%-64.zip.sha1
+for /f %%x in ('pushd %WORKSPACE% ^& git log --pretty^=format:%%h -n 1 ^& popd') do set GIT_HEAD=%%x
+echo %GIT_HEAD%
+
+zip -r -9 %WORKSPACE%\apr-util-%BRANCH_OR_TAG%-%GIT_HEAD%-64.zip .
+sha1sum.exe %WORKSPACE%\apr-util-%BRANCH_OR_TAG%-%GIT_HEAD%-64.zip>%WORKSPACE%\apr-util-%BRANCH_OR_TAG%-%GIT_HEAD%-64.zip.sha1
 
 IF "%RUN_STATIC_ANALYSIS%" equ "true" (
     REM use --force to expand all levels of all macros, kinda slow (single digit minutes even with such a small project)
