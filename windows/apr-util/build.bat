@@ -1,7 +1,7 @@
 REM @author: Michal Karm Babacek <karm@fedoraproject.org>
 REM This script builds apr-util
 REM We rely on label being the same. It is probably for the best, gonna keep the same MSVC...
-unzip arch=64,label=%label%\apr*.zip -d .\apr
+unzip label=%label%\apr*.zip -d .\apr
 IF NOT %ERRORLEVEL% == 0 ( exit 1 )
 unzip arch=64,label=%label%\OpenSSL*.zip -d .\openssl
 IF NOT %ERRORLEVEL% == 0 ( exit 1 )

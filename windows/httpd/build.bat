@@ -18,11 +18,11 @@ unzip .\dependencies\arch=%arch%,label=%label%\zlib*.zip -d .\dependencies\zlib
 IF NOT %ERRORLEVEL% == 0 ( exit 1 )
 
 REM APR
-unzip .\dependencies\arch=%arch%,label=%label%\apr-1*.zip -d .\dependencies\apr
+unzip .\dependencies\label=%label%\apr-1*.zip -d .\dependencies\apr
 IF NOT %ERRORLEVEL% == 0 ( exit 1 )
 
 REM APR Util
-unzip .\dependencies\arch=%arch%,label=%label%\apr-util-1*.zip -d .\dependencies\apr-util
+unzip .\dependencies\label=%label%\apr-util-1*.zip -d .\dependencies\apr-util
 IF NOT %ERRORLEVEL% == 0 ( exit 1 )
 
 REM PCRE
