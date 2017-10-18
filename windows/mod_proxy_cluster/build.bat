@@ -63,7 +63,7 @@ IF "%DISTRO%" equ "jboss" (
 
 SET HTTPD_DEV_HOME_POSSIX=%HTTPD_DEV_HOME:\=/%
 
-cmake -G "NMake Makefiles" -DCMAKE_BUILD_TYPE=Release -DCMAKE_C_FLAGS_RELEASE="/O2 /Wall /Zi" ^
+cmake -G "NMake Makefiles" -DCMAKE_BUILD_TYPE=Release -DCMAKE_C_FLAGS_RELEASE="/MD /O2 /Ob2 /Wall /Zi" ^
 -DAPR_LIBRARY=%HTTPD_DEV_HOME_POSSIX%/lib/libapr-1.lib ^
 -DAPR_INCLUDE_DIR=%HTTPD_DEV_HOME_POSSIX%/include/ ^
 -DAPACHE_INCLUDE_DIR=%HTTPD_DEV_HOME_POSSIX%/include/ ^
@@ -148,7 +148,7 @@ REM Get mod_proxy_cluster version for packaging and README
 for /f %%z in ('powershell -Command "Get-Content %WORKSPACE%\mod_proxy_cluster\native\include\mod_proxy_cluster.h | Select-String '#define MOD_CLUSTER_EXPOSED_VERSION ""mod_cluster/([^^""]*)""""' -AllMatches | Foreach-Object {$_.Matches} | Foreach-Object {$_.Groups[1].Value}"') do set MOD_PROXY_CLUSTER_VERSION=%%z
 echo %MOD_PROXY_CLUSTER_VERSION%
 
-for /f %%x in ('pushd C:\httpd\mod_proxy_cluster ^& git log --pretty^=format:%%h -n 1 ^& popd') do set GIT_HEAD=%%x
+for /f %%x in ('pushd %WORKSPACE%\mod_proxy_cluster\native\ ^& git log --pretty^=format:%%h -n 1 ^& popd') do set GIT_HEAD=%%x
 echo %GIT_HEAD%
 
 REM If we operate on SNAPSHOT version, we append GIT HEAD to the version string
