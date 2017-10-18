@@ -57,7 +57,7 @@ SET "CMAKE_INSTALL_PREFIX_POSSIX=%CMAKE_INSTALL_PREFIX:\=/%"
 cd %WORKSPACE%\cmakebuild
 
 REM CMake. Beware: Command must be shorter than 8191 chars...
-cmake -G "NMake Makefiles" -DCMAKE_BUILD_TYPE=Release -DCMAKE_C_FLAGS_RELEASE="/O2 /Wall /Zi" ^
+cmake -G "NMake Makefiles" -DCMAKE_BUILD_TYPE=Release -DCMAKE_C_FLAGS_RELEASE="/MD /O2 /Ob2 /Wall /Zi" ^
 -DOPENSSL_ROOT_DIR=%WORKSPACE_POSSIX%/dependencies/openssl -DLIBXML2_INCLUDE_DIR=%WORKSPACE_POSSIX%/dependencies/libxml2/include/libxml2/ ^
 -DLIBXML2_LIBRARIES=%WORKSPACE_POSSIX%/dependencies/libxml2/lib/libxml2.lib;%WORKSPACE_POSSIX%/dependencies/libxml2/lib/libxml2_a.lib;^
 %WORKSPACE_POSSIX%/dependencies/libxml2/lib/libxml2_a_dll.lib ^
