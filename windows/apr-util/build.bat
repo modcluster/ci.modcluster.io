@@ -20,8 +20,11 @@ cd %WORKSPACE%\build-64
 REM Note that some attributes cannot handle backslashes...
 SET WORKSPACEPOSSIX=%WORKSPACE:\=/%
 
+REM Until this is resolved: https://bz.apache.org/bugzilla/show_bug.cgi?id=61636
+patch.exe --verbose -p1 %WORKSPACE%\test\testcrypto.c -i %WORKSPACE%\ci-scripts\windows\apr-util\1.6.x-BZ-61636.patch
+
 cmake -G "NMake Makefiles" -DCMAKE_BUILD_TYPE=Release -DCMAKE_C_FLAGS_RELEASE="/MD /O2 /Ob2 /Wall /Zi" ^
--DEXPAT_INCLUDE_DIRS=%WORKSPACEPOSSIX%/libexpat/include/ -DEXPAT_LIBRARY=%WORKSPACEPOSSIX%/libexpat/lib/expat.lib ^
+-DEXPAT_INCLUDE_DIR=%WORKSPACEPOSSIX%/libexpat/include/ -DEXPAT_LIBRARY=%WORKSPACEPOSSIX%/libexpat/lib/expat.lib ^
 -DAPR_INCLUDE_DIR=%WORKSPACEPOSSIX%/apr/include/ ^
 -DAPR_LIBRARIES=%WORKSPACEPOSSIX%/apr/lib/libapr-1.lib;%WORKSPACEPOSSIX%/apr/lib/libaprapp-1.lib ^
 -DOPENSSL_ROOT_DIR=%WORKSPACEPOSSIX%/openssl/ -DAPU_HAVE_CRYPTO=ON -DAPU_HAVE_ODBC=ON ^
@@ -30,11 +33,15 @@ cmake -G "NMake Makefiles" -DCMAKE_BUILD_TYPE=Release -DCMAKE_C_FLAGS_RELEASE="/
 
 nmake
 
+REM How about something like λ set "PATH=C:\tmp\apr\bin\;C:\tmp\libexpat-R_2_2_0-64\bin\;C:\tmp\OpenSSL_1_0_2h-64\bin\;%PATH%" & .\testall.exe -v testcrypto
+
 copy %WORKSPACE%\apr\bin\libapr-1.dll .
 copy %WORKSPACE%\libexpat\bin\expat.dll .
 copy %WORKSPACE%\openssl\bin\ssleay32.dll .
 copy %WORKSPACE%\openssl\bin\libeay32.dll .
 
+SET APU_TEST_NSS=off
+SET APU_TEST_COMMONCRYPTO=off
 .\testall.exe
 
 IF NOT %ERRORLEVEL% == 0 ( exit 1 )
