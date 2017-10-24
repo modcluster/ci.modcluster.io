@@ -1,0 +1,360 @@
+From 098ffcb90940b159e3aad382c603d4d04cd9272f Mon Sep 17 00:00:00 2001
+From: Michal Karm Babacek <karm@fedoraproject.org>
+Date: Tue, 24 Oct 2017 10:07:31 -0700
+Subject: [PATCH] Patched to build independently on APR, i.e. with a prepared
+ APR release.
+
+---
+ apriconv.mak         |  16 +++----
+ build/modules.mk.win |   2 +-
+ libapriconv.mak      | 133 ++++++++++++++++++++++++++-------------------------
+ 3 files changed, 76 insertions(+), 75 deletions(-)
+
+diff --git a/apriconv.mak b/apriconv.mak
+index ee24546..47f0474 100644
+--- a/apriconv.mak
++++ b/apriconv.mak
+@@ -55,7 +55,7 @@ CLEAN :
+     if not exist "$(OUTDIR)/$(NULL)" mkdir "$(OUTDIR)"
+ 
+ CPP=cl.exe
+-CPP_PROJ=/nologo /MD /W3 /Zi /O2 /Oy- /I "./include" /I "../apr/include" /D "NDEBUG" /D "APR_DECLARE_STATIC" /D "API_DECLARE_STATIC" /D "WIN32" /D "_WINDOWS" /Fp"$(INTDIR)\apriconv.pch" /Yu"iconv.h" /Fo"$(INTDIR)\\" /Fd"$(OUTDIR)\apriconv-1" /FD /c 
++CPP_PROJ=/nologo /MD /W3 /Zi /O2 /Oy- /I "./include" /I "./apr/include" /D "NDEBUG" /D "APR_DECLARE_STATIC" /D "API_DECLARE_STATIC" /D "WIN32" /D "_WINDOWS" /Fp"$(INTDIR)\apriconv.pch" /Yu"iconv.h" /Fo"$(INTDIR)\\" /Fd"$(OUTDIR)\apriconv-1" /FD /c 
+ 
+ .c{$(INTDIR)}.obj::
+    $(CPP) @<<
+@@ -136,7 +136,7 @@ CLEAN :
+     if not exist "$(OUTDIR)/$(NULL)" mkdir "$(OUTDIR)"
+ 
+ CPP=cl.exe
+-CPP_PROJ=/nologo /MDd /W3 /Zi /Od /I "./include" /I "../apr/include" /D "_DEBUG" /D "APR_DECLARE_STATIC" /D "API_DECLARE_STATIC" /D "WIN32" /D "_WINDOWS" /Fp"$(INTDIR)\apriconv.pch" /Yu"iconv.h" /Fo"$(INTDIR)\\" /Fd"$(OUTDIR)\apriconv-1" /FD /EHsc /c 
++CPP_PROJ=/nologo /MDd /W3 /Zi /Od /I "./include" /I "./apr/include" /D "_DEBUG" /D "APR_DECLARE_STATIC" /D "API_DECLARE_STATIC" /D "WIN32" /D "_WINDOWS" /Fp"$(INTDIR)\apriconv.pch" /Yu"iconv.h" /Fo"$(INTDIR)\\" /Fd"$(OUTDIR)\apriconv-1" /FD /EHsc /c 
+ 
+ .c{$(INTDIR)}.obj::
+    $(CPP) @<<
+@@ -217,7 +217,7 @@ CLEAN :
+     if not exist "$(OUTDIR)/$(NULL)" mkdir "$(OUTDIR)"
+ 
+ CPP=cl.exe
+-CPP_PROJ=/nologo /MD /W3 /Zi /O2 /Oy- /I "./include" /I "../apr/include" /D "NDEBUG" /D "APR_DECLARE_STATIC" /D "API_DECLARE_STATIC" /D "WIN32" /D "_WINDOWS" /Fp"$(INTDIR)\apriconv.pch" /Yu"iconv.h" /Fo"$(INTDIR)\\" /Fd"$(OUTDIR)\apriconv-1" /FD /c 
++CPP_PROJ=/nologo /MD /W3 /Zi /O2 /Oy- /I "./include" /I "./apr/include" /D "NDEBUG" /D "APR_DECLARE_STATIC" /D "API_DECLARE_STATIC" /D "WIN32" /D "_WINDOWS" /Fp"$(INTDIR)\apriconv.pch" /Yu"iconv.h" /Fo"$(INTDIR)\\" /Fd"$(OUTDIR)\apriconv-1" /FD /c 
+ 
+ .c{$(INTDIR)}.obj::
+    $(CPP) @<<
+@@ -298,7 +298,7 @@ CLEAN :
+     if not exist "$(OUTDIR)/$(NULL)" mkdir "$(OUTDIR)"
+ 
+ CPP=cl.exe
+-CPP_PROJ=/nologo /MDd /W3 /Zi /Od /I "./include" /I "../apr/include" /D "_DEBUG" /D "APR_DECLARE_STATIC" /D "API_DECLARE_STATIC" /D "WIN32" /D "_WINDOWS" /Fp"$(INTDIR)\apriconv.pch" /Yu"iconv.h" /Fo"$(INTDIR)\\" /Fd"$(OUTDIR)\apriconv-1" /FD /EHsc /c 
++CPP_PROJ=/nologo /MDd /W3 /Zi /Od /I "./include" /I "./apr/include" /D "_DEBUG" /D "APR_DECLARE_STATIC" /D "API_DECLARE_STATIC" /D "WIN32" /D "_WINDOWS" /Fp"$(INTDIR)\apriconv.pch" /Yu"iconv.h" /Fo"$(INTDIR)\\" /Fd"$(OUTDIR)\apriconv-1" /FD /EHsc /c 
+ 
+ .c{$(INTDIR)}.obj::
+    $(CPP) @<<
+@@ -368,7 +368,7 @@ SOURCE=.\lib\iconv.c
+ 
+ !IF  "$(CFG)" == "apriconv - Win32 Release"
+ 
+-CPP_SWITCHES=/nologo /MD /W3 /Zi /O2 /Oy- /I "./include" /I "../apr/include" /D "NDEBUG" /D "APR_DECLARE_STATIC" /D "API_DECLARE_STATIC" /D "WIN32" /D "_WINDOWS" /Fp"$(INTDIR)\apriconv.pch" /Yc"iconv.h" /Fo"$(INTDIR)\\" /Fd"$(OUTDIR)\apriconv-1" /FD /c 
++CPP_SWITCHES=/nologo /MD /W3 /Zi /O2 /Oy- /I "./include" /I "./apr/include" /D "NDEBUG" /D "APR_DECLARE_STATIC" /D "API_DECLARE_STATIC" /D "WIN32" /D "_WINDOWS" /Fp"$(INTDIR)\apriconv.pch" /Yc"iconv.h" /Fo"$(INTDIR)\\" /Fd"$(OUTDIR)\apriconv-1" /FD /c 
+ 
+ "$(INTDIR)\iconv.obj"	"$(INTDIR)\apriconv.pch" : $(SOURCE) "$(INTDIR)"
+ 	$(CPP) @<<
+@@ -378,7 +378,7 @@ CPP_SWITCHES=/nologo /MD /W3 /Zi /O2 /Oy- /I "./include" /I "../apr/include" /D
+ 
+ !ELSEIF  "$(CFG)" == "apriconv - Win32 Debug"
+ 
+-CPP_SWITCHES=/nologo /MDd /W3 /Zi /Od /I "./include" /I "../apr/include" /D "_DEBUG" /D "APR_DECLARE_STATIC" /D "API_DECLARE_STATIC" /D "WIN32" /D "_WINDOWS" /Fp"$(INTDIR)\apriconv.pch" /Yc"iconv.h" /Fo"$(INTDIR)\\" /Fd"$(OUTDIR)\apriconv-1" /FD /EHsc /c 
++CPP_SWITCHES=/nologo /MDd /W3 /Zi /Od /I "./include" /I "./apr/include" /D "_DEBUG" /D "APR_DECLARE_STATIC" /D "API_DECLARE_STATIC" /D "WIN32" /D "_WINDOWS" /Fp"$(INTDIR)\apriconv.pch" /Yc"iconv.h" /Fo"$(INTDIR)\\" /Fd"$(OUTDIR)\apriconv-1" /FD /EHsc /c 
+ 
+ "$(INTDIR)\iconv.obj"	"$(INTDIR)\apriconv.pch" : $(SOURCE) "$(INTDIR)"
+ 	$(CPP) @<<
+@@ -388,7 +388,7 @@ CPP_SWITCHES=/nologo /MDd /W3 /Zi /Od /I "./include" /I "../apr/include" /D "_DE
+ 
+ !ELSEIF  "$(CFG)" == "apriconv - x64 Release"
+ 
+-CPP_SWITCHES=/nologo /MD /W3 /Zi /O2 /Oy- /I "./include" /I "../apr/include" /D "NDEBUG" /D "APR_DECLARE_STATIC" /D "API_DECLARE_STATIC" /D "WIN32" /D "_WINDOWS" /Fp"$(INTDIR)\apriconv.pch" /Yc"iconv.h" /Fo"$(INTDIR)\\" /Fd"$(OUTDIR)\apriconv-1" /FD /c 
++CPP_SWITCHES=/nologo /MD /W3 /Zi /O2 /Oy- /I "./include" /I "./apr/include" /D "NDEBUG" /D "APR_DECLARE_STATIC" /D "API_DECLARE_STATIC" /D "WIN32" /D "_WINDOWS" /Fp"$(INTDIR)\apriconv.pch" /Yc"iconv.h" /Fo"$(INTDIR)\\" /Fd"$(OUTDIR)\apriconv-1" /FD /c 
+ 
+ "$(INTDIR)\iconv.obj"	"$(INTDIR)\apriconv.pch" : $(SOURCE) "$(INTDIR)"
+ 	$(CPP) @<<
+@@ -398,7 +398,7 @@ CPP_SWITCHES=/nologo /MD /W3 /Zi /O2 /Oy- /I "./include" /I "../apr/include" /D
+ 
+ !ELSEIF  "$(CFG)" == "apriconv - x64 Debug"
+ 
+-CPP_SWITCHES=/nologo /MDd /W3 /Zi /Od /I "./include" /I "../apr/include" /D "_DEBUG" /D "APR_DECLARE_STATIC" /D "API_DECLARE_STATIC" /D "WIN32" /D "_WINDOWS" /Fp"$(INTDIR)\apriconv.pch" /Yc"iconv.h" /Fo"$(INTDIR)\\" /Fd"$(OUTDIR)\apriconv-1" /FD /EHsc /c 
++CPP_SWITCHES=/nologo /MDd /W3 /Zi /Od /I "./include" /I "./apr/include" /D "_DEBUG" /D "APR_DECLARE_STATIC" /D "API_DECLARE_STATIC" /D "WIN32" /D "_WINDOWS" /Fp"$(INTDIR)\apriconv.pch" /Yc"iconv.h" /Fo"$(INTDIR)\\" /Fd"$(OUTDIR)\apriconv-1" /FD /EHsc /c 
+ 
+ "$(INTDIR)\iconv.obj"	"$(INTDIR)\apriconv.pch" : $(SOURCE) "$(INTDIR)"
+ 	$(CPP) @<<
+diff --git a/build/modules.mk.win b/build/modules.mk.win
+index 15e9d7e..ef0c6f0 100644
+--- a/build/modules.mk.win
++++ b/build/modules.mk.win
+@@ -145,7 +145,7 @@ CFG_OUTPUT  = LibD\iconv
+ !ELSEIF "$(BUILD_MODE)" == "x64 Release"
+ 
+ !IF "$(BIND_MODE)" == "shared"
+-API_LIBS = $(APR_SOURCE)\x64\Release\libapr-1.lib \
++API_LIBS = $(APR_SOURCE)\apr\lib\libapr-1.lib \
+ 	   $(API_SOURCE)\x64\Release\libapriconv-1.lib
+ CFG_CFLAGS  = /MD /Zi /O2 /Oy- /D "NDEBUG"
+ CFG_LDFLAGS = /debug /opt:ref /incremental:no
+diff --git a/libapriconv.mak b/libapriconv.mak
+index 16db5c2..3e39f95 100644
+--- a/libapriconv.mak
++++ b/libapriconv.mak
+@@ -71,7 +71,7 @@ CLEAN :
+     if not exist "$(OUTDIR)/$(NULL)" mkdir "$(OUTDIR)"
+ 
+ CPP=cl.exe
+-CPP_PROJ=/nologo /MD /W3 /Zi /O2 /Oy- /I "./include" /I "../apr/include" /D "NDEBUG" /D "API_DECLARE_EXPORT" /D "WIN32" /D "_WINDOWS" /Fp"$(INTDIR)\libapriconv.pch" /Yu"iconv.h" /Fo"$(INTDIR)\\" /Fd"$(INTDIR)\libapriconv_src" /FD /c 
++CPP_PROJ=/nologo /MD /W3 /Zi /O2 /Oy- /I "./include" /I "./apr/include" /D "NDEBUG" /D "API_DECLARE_EXPORT" /D "WIN32" /D "_WINDOWS" /Fp"$(INTDIR)\libapriconv.pch" /Yu"iconv.h" /Fo"$(INTDIR)\\" /Fd"$(INTDIR)\libapriconv_src" /FD /c 
+ 
+ .c{$(INTDIR)}.obj::
+    $(CPP) @<<
+@@ -106,7 +106,7 @@ CPP_PROJ=/nologo /MD /W3 /Zi /O2 /Oy- /I "./include" /I "../apr/include" /D "NDE
+ MTL=midl.exe
+ MTL_PROJ=/nologo /D "NDEBUG" /mktyplib203 /o /win32 "NUL" 
+ RSC=rc.exe
+-RSC_PROJ=/l 0x409 /fo"$(INTDIR)\libapriconv.res" /i "./include" /i "../apr/include" /d "NDEBUG" /d "API_VERSION_ONLY" 
++RSC_PROJ=/l 0x409 /fo"$(INTDIR)\libapriconv.res" /i "./include" /i "./apr/include" /d "NDEBUG" /d "API_VERSION_ONLY" 
+ BSC32=bscmake.exe
+ BSC32_FLAGS=/nologo /o"$(OUTDIR)\libapriconv.bsc" 
+ BSC32_SBRS= \
+@@ -122,7 +122,7 @@ LINK32_OBJS= \
+ 	"$(INTDIR)\iconv_module.obj" \
+ 	"$(INTDIR)\iconv_uc.obj" \
+ 	"$(INTDIR)\libapriconv.res" \
+-	"..\apr\Release\libapr-1.lib"
++	".\apr\Release\libapr-1.lib"
+ 
+ "$(OUTDIR)\libapriconv-1.dll" : "$(OUTDIR)" $(DEF_FILE) $(LINK32_OBJS)
+     $(LINK32) @<<
+@@ -186,7 +186,7 @@ CLEAN :
+     if not exist "$(OUTDIR)/$(NULL)" mkdir "$(OUTDIR)"
+ 
+ CPP=cl.exe
+-CPP_PROJ=/nologo /MDd /W3 /Zi /Od /I "./include" /I "../apr/include" /D "_DEBUG" /D "API_DECLARE_EXPORT" /D "WIN32" /D "_WINDOWS" /Fp"$(INTDIR)\libapriconv.pch" /Yu"iconv.h" /Fo"$(INTDIR)\\" /Fd"$(INTDIR)\libapriconv_src" /FD /EHsc /c 
++CPP_PROJ=/nologo /MDd /W3 /Zi /Od /I "./include" /I "./apr/include" /D "_DEBUG" /D "API_DECLARE_EXPORT" /D "WIN32" /D "_WINDOWS" /Fp"$(INTDIR)\libapriconv.pch" /Yu"iconv.h" /Fo"$(INTDIR)\\" /Fd"$(INTDIR)\libapriconv_src" /FD /EHsc /c 
+ 
+ .c{$(INTDIR)}.obj::
+    $(CPP) @<<
+@@ -221,7 +221,7 @@ CPP_PROJ=/nologo /MDd /W3 /Zi /Od /I "./include" /I "../apr/include" /D "_DEBUG"
+ MTL=midl.exe
+ MTL_PROJ=/nologo /D "_DEBUG" /mktyplib203 /o /win32 "NUL" 
+ RSC=rc.exe
+-RSC_PROJ=/l 0x409 /fo"$(INTDIR)\libapriconv.res" /i "./include" /i "../apr/include" /d "_DEBUG" /d "API_VERSION_ONLY" 
++RSC_PROJ=/l 0x409 /fo"$(INTDIR)\libapriconv.res" /i "./include" /i "./apr/include" /d "_DEBUG" /d "API_VERSION_ONLY" 
+ BSC32=bscmake.exe
+ BSC32_FLAGS=/nologo /o"$(OUTDIR)\libapriconv.bsc" 
+ BSC32_SBRS= \
+@@ -237,7 +237,7 @@ LINK32_OBJS= \
+ 	"$(INTDIR)\iconv_module.obj" \
+ 	"$(INTDIR)\iconv_uc.obj" \
+ 	"$(INTDIR)\libapriconv.res" \
+-	"..\apr\Debug\libapr-1.lib"
++	".\apr\Debug\libapr-1.lib"
+ 
+ "$(OUTDIR)\libapriconv-1.dll" : "$(OUTDIR)" $(DEF_FILE) $(LINK32_OBJS)
+     $(LINK32) @<<
+@@ -301,7 +301,7 @@ CLEAN :
+     if not exist "$(OUTDIR)/$(NULL)" mkdir "$(OUTDIR)"
+ 
+ CPP=cl.exe
+-CPP_PROJ=/nologo /MD /W3 /Zi /O2 /Oy- /I "./include" /I "../apr/include" /D "NDEBUG" /D "API_DECLARE_EXPORT" /D "WIN32" /D "_WINDOWS" /Fp"$(INTDIR)\libapriconv.pch" /Yu"iconv.h" /Fo"$(INTDIR)\\" /Fd"$(INTDIR)\libapriconv_src" /FD /c 
++CPP_PROJ=/nologo /MD /W3 /Zi /O2 /Oy- /I "./include" /I "./apr/include" /D "NDEBUG" /D "API_DECLARE_EXPORT" /D "WIN32" /D "_WINDOWS" /Fp"$(INTDIR)\libapriconv.pch" /Yu"iconv.h" /Fo"$(INTDIR)\\" /Fd"$(INTDIR)\libapriconv_src" /FD /c 
+ 
+ .c{$(INTDIR)}.obj::
+    $(CPP) @<<
+@@ -336,7 +336,7 @@ CPP_PROJ=/nologo /MD /W3 /Zi /O2 /Oy- /I "./include" /I "../apr/include" /D "NDE
+ MTL=midl.exe
+ MTL_PROJ=/nologo /D "NDEBUG" /mktyplib203 /o /win32 "NUL" 
+ RSC=rc.exe
+-RSC_PROJ=/l 0x409 /fo"$(INTDIR)\libapriconv.res" /i "./include" /i "../apr/include" /d "NDEBUG" /d "API_VERSION_ONLY" 
++RSC_PROJ=/l 0x409 /fo"$(INTDIR)\libapriconv.res" /i "./include" /i "./apr/include" /d "NDEBUG" /d "API_VERSION_ONLY" 
+ BSC32=bscmake.exe
+ BSC32_FLAGS=/nologo /o"$(OUTDIR)\libapriconv.bsc" 
+ BSC32_SBRS= \
+@@ -352,7 +352,7 @@ LINK32_OBJS= \
+ 	"$(INTDIR)\iconv_module.obj" \
+ 	"$(INTDIR)\iconv_uc.obj" \
+ 	"$(INTDIR)\libapriconv.res" \
+-	"..\apr\x64\Release\libapr-1.lib"
++	".\apr\lib\libapr-1.lib"
+ 
+ "$(OUTDIR)\libapriconv-1.dll" : "$(OUTDIR)" $(DEF_FILE) $(LINK32_OBJS)
+     $(LINK32) @<<
+@@ -416,7 +416,7 @@ CLEAN :
+     if not exist "$(OUTDIR)/$(NULL)" mkdir "$(OUTDIR)"
+ 
+ CPP=cl.exe
+-CPP_PROJ=/nologo /MDd /W3 /Zi /Od /I "./include" /I "../apr/include" /D "_DEBUG" /D "API_DECLARE_EXPORT" /D "WIN32" /D "_WINDOWS" /Fp"$(INTDIR)\libapriconv.pch" /Yu"iconv.h" /Fo"$(INTDIR)\\" /Fd"$(INTDIR)\libapriconv_src" /FD /EHsc /c 
++CPP_PROJ=/nologo /MDd /W3 /Zi /Od /I "./include" /I "./apr/include" /D "_DEBUG" /D "API_DECLARE_EXPORT" /D "WIN32" /D "_WINDOWS" /Fp"$(INTDIR)\libapriconv.pch" /Yu"iconv.h" /Fo"$(INTDIR)\\" /Fd"$(INTDIR)\libapriconv_src" /FD /EHsc /c 
+ 
+ .c{$(INTDIR)}.obj::
+    $(CPP) @<<
+@@ -451,7 +451,7 @@ CPP_PROJ=/nologo /MDd /W3 /Zi /Od /I "./include" /I "../apr/include" /D "_DEBUG"
+ MTL=midl.exe
+ MTL_PROJ=/nologo /D "_DEBUG" /mktyplib203 /o /win32 "NUL" 
+ RSC=rc.exe
+-RSC_PROJ=/l 0x409 /fo"$(INTDIR)\libapriconv.res" /i "./include" /i "../apr/include" /d "_DEBUG" /d "API_VERSION_ONLY" 
++RSC_PROJ=/l 0x409 /fo"$(INTDIR)\libapriconv.res" /i "./include" /i "./apr/include" /d "_DEBUG" /d "API_VERSION_ONLY" 
+ BSC32=bscmake.exe
+ BSC32_FLAGS=/nologo /o"$(OUTDIR)\libapriconv.bsc" 
+ BSC32_SBRS= \
+@@ -467,7 +467,7 @@ LINK32_OBJS= \
+ 	"$(INTDIR)\iconv_module.obj" \
+ 	"$(INTDIR)\iconv_uc.obj" \
+ 	"$(INTDIR)\libapriconv.res" \
+-	"..\apr\x64\Debug\libapr-1.lib"
++	".\apr\x64\Debug\libapr-1.lib"
+ 
+ "$(OUTDIR)\libapriconv-1.dll" : "$(OUTDIR)" $(DEF_FILE) $(LINK32_OBJS)
+     $(LINK32) @<<
+@@ -504,7 +504,7 @@ SOURCE=.\lib\iconv.c
+ 
+ !IF  "$(CFG)" == "libapriconv - Win32 Release"
+ 
+-CPP_SWITCHES=/nologo /MD /W3 /Zi /O2 /Oy- /I "./include" /I "../apr/include" /D "NDEBUG" /D "API_DECLARE_EXPORT" /D "WIN32" /D "_WINDOWS" /Fp"$(INTDIR)\libapriconv.pch" /Yc"iconv.h" /Fo"$(INTDIR)\\" /Fd"$(INTDIR)\libapriconv_src" /FD /c 
++CPP_SWITCHES=/nologo /MD /W3 /Zi /O2 /Oy- /I "./include" /I "./apr/include" /D "NDEBUG" /D "API_DECLARE_EXPORT" /D "WIN32" /D "_WINDOWS" /Fp"$(INTDIR)\libapriconv.pch" /Yc"iconv.h" /Fo"$(INTDIR)\\" /Fd"$(INTDIR)\libapriconv_src" /FD /c 
+ 
+ "$(INTDIR)\iconv.obj"	"$(INTDIR)\libapriconv.pch" : $(SOURCE) "$(INTDIR)"
+ 	$(CPP) @<<
+@@ -514,7 +514,7 @@ CPP_SWITCHES=/nologo /MD /W3 /Zi /O2 /Oy- /I "./include" /I "../apr/include" /D
+ 
+ !ELSEIF  "$(CFG)" == "libapriconv - Win32 Debug"
+ 
+-CPP_SWITCHES=/nologo /MDd /W3 /Zi /Od /I "./include" /I "../apr/include" /D "_DEBUG" /D "API_DECLARE_EXPORT" /D "WIN32" /D "_WINDOWS" /Fp"$(INTDIR)\libapriconv.pch" /Yc"iconv.h" /Fo"$(INTDIR)\\" /Fd"$(INTDIR)\libapriconv_src" /FD /EHsc /c 
++CPP_SWITCHES=/nologo /MDd /W3 /Zi /Od /I "./include" /I "./apr/include" /D "_DEBUG" /D "API_DECLARE_EXPORT" /D "WIN32" /D "_WINDOWS" /Fp"$(INTDIR)\libapriconv.pch" /Yc"iconv.h" /Fo"$(INTDIR)\\" /Fd"$(INTDIR)\libapriconv_src" /FD /EHsc /c 
+ 
+ "$(INTDIR)\iconv.obj"	"$(INTDIR)\libapriconv.pch" : $(SOURCE) "$(INTDIR)"
+ 	$(CPP) @<<
+@@ -524,7 +524,7 @@ CPP_SWITCHES=/nologo /MDd /W3 /Zi /Od /I "./include" /I "../apr/include" /D "_DE
+ 
+ !ELSEIF  "$(CFG)" == "libapriconv - x64 Release"
+ 
+-CPP_SWITCHES=/nologo /MD /W3 /Zi /O2 /Oy- /I "./include" /I "../apr/include" /D "NDEBUG" /D "API_DECLARE_EXPORT" /D "WIN32" /D "_WINDOWS" /Fp"$(INTDIR)\libapriconv.pch" /Yc"iconv.h" /Fo"$(INTDIR)\\" /Fd"$(INTDIR)\libapriconv_src" /FD /c 
++CPP_SWITCHES=/nologo /MD /W3 /Zi /O2 /Oy- /I "./include" /I "./apr/include" /D "NDEBUG" /D "API_DECLARE_EXPORT" /D "WIN32" /D "_WINDOWS" /Fp"$(INTDIR)\libapriconv.pch" /Yc"iconv.h" /Fo"$(INTDIR)\\" /Fd"$(INTDIR)\libapriconv_src" /FD /c 
+ 
+ "$(INTDIR)\iconv.obj"	"$(INTDIR)\libapriconv.pch" : $(SOURCE) "$(INTDIR)"
+ 	$(CPP) @<<
+@@ -534,7 +534,7 @@ CPP_SWITCHES=/nologo /MD /W3 /Zi /O2 /Oy- /I "./include" /I "../apr/include" /D
+ 
+ !ELSEIF  "$(CFG)" == "libapriconv - x64 Debug"
+ 
+-CPP_SWITCHES=/nologo /MDd /W3 /Zi /Od /I "./include" /I "../apr/include" /D "_DEBUG" /D "API_DECLARE_EXPORT" /D "WIN32" /D "_WINDOWS" /Fp"$(INTDIR)\libapriconv.pch" /Yc"iconv.h" /Fo"$(INTDIR)\\" /Fd"$(INTDIR)\libapriconv_src" /FD /EHsc /c 
++CPP_SWITCHES=/nologo /MDd /W3 /Zi /Od /I "./include" /I "./apr/include" /D "_DEBUG" /D "API_DECLARE_EXPORT" /D "WIN32" /D "_WINDOWS" /Fp"$(INTDIR)\libapriconv.pch" /Yc"iconv.h" /Fo"$(INTDIR)\\" /Fd"$(INTDIR)\libapriconv_src" /FD /EHsc /c 
+ 
+ "$(INTDIR)\iconv.obj"	"$(INTDIR)\libapriconv.pch" : $(SOURCE) "$(INTDIR)"
+ 	$(CPP) @<<
+@@ -579,56 +579,57 @@ SOURCE=.\lib\iconv_uc.c
+ "$(INTDIR)\iconv_uc.obj" : $(SOURCE) "$(INTDIR)" "$(INTDIR)\libapriconv.pch"
+ 	$(CPP) $(CPP_PROJ) $(SOURCE)
+ 
+-
+-!IF  "$(CFG)" == "libapriconv - Win32 Release"
+-
+-"libapr - Win32 Release" : 
+-   cd ".\..\apr"
+-   $(MAKE) /$(MAKEFLAGS) /F ".\libapr.mak" CFG="libapr - Win32 Release" 
+-   cd "..\apr-iconv"
+-
+-"libapr - Win32 ReleaseCLEAN" : 
+-   cd ".\..\apr"
+-   $(MAKE) /$(MAKEFLAGS) /F ".\libapr.mak" CFG="libapr - Win32 Release" RECURSE=1 CLEAN 
+-   cd "..\apr-iconv"
+-
+-!ELSEIF  "$(CFG)" == "libapriconv - Win32 Debug"
+-
+-"libapr - Win32 Debug" : 
+-   cd ".\..\apr"
+-   $(MAKE) /$(MAKEFLAGS) /F ".\libapr.mak" CFG="libapr - Win32 Debug" 
+-   cd "..\apr-iconv"
+-
+-"libapr - Win32 DebugCLEAN" : 
+-   cd ".\..\apr"
+-   $(MAKE) /$(MAKEFLAGS) /F ".\libapr.mak" CFG="libapr - Win32 Debug" RECURSE=1 CLEAN 
+-   cd "..\apr-iconv"
+-
+-!ELSEIF  "$(CFG)" == "libapriconv - x64 Release"
+-
+-"libapr - x64 Release" : 
+-   cd ".\..\apr"
+-   $(MAKE) /$(MAKEFLAGS) /F ".\libapr.mak" CFG="libapr - x64 Release" 
+-   cd "..\apr-iconv"
+-
+-"libapr - x64 ReleaseCLEAN" : 
+-   cd ".\..\apr"
+-   $(MAKE) /$(MAKEFLAGS) /F ".\libapr.mak" CFG="libapr - x64 Release" RECURSE=1 CLEAN 
+-   cd "..\apr-iconv"
+-
+-!ELSEIF  "$(CFG)" == "libapriconv - x64 Debug"
+-
+-"libapr - x64 Debug" : 
+-   cd ".\..\apr"
+-   $(MAKE) /$(MAKEFLAGS) /F ".\libapr.mak" CFG="libapr - x64 Debug" 
+-   cd "..\apr-iconv"
+-
+-"libapr - x64 DebugCLEAN" : 
+-   cd ".\..\apr"
+-   $(MAKE) /$(MAKEFLAGS) /F ".\libapr.mak" CFG="libapr - x64 Debug" RECURSE=1 CLEAN 
+-   cd "..\apr-iconv"
+-
+-!ENDIF 
++"libapr - x64 Release":
++    echo  Ignored
++#!IF  "$(CFG)" == "libapriconv - Win32 Release"
++#
++#"libapr - Win32 Release" : 
++#   cd ".\..\apr"
++#   $(MAKE) /$(MAKEFLAGS) /F ".\libapr.mak" CFG="libapr - Win32 Release" 
++#   cd "..\apr-iconv"
++#
++#"libapr - Win32 ReleaseCLEAN" : 
++#   cd ".\..\apr"
++#   $(MAKE) /$(MAKEFLAGS) /F ".\libapr.mak" CFG="libapr - Win32 Release" RECURSE=1 CLEAN 
++#   cd "..\apr-iconv"
++#
++#!ELSEIF  "$(CFG)" == "libapriconv - Win32 Debug"
++#
++#"libapr - Win32 Debug" : 
++#   cd ".\..\apr"
++#   $(MAKE) /$(MAKEFLAGS) /F ".\libapr.mak" CFG="libapr - Win32 Debug" 
++#   cd "..\apr-iconv"
++#
++#"libapr - Win32 DebugCLEAN" : 
++#   cd ".\..\apr"
++#   $(MAKE) /$(MAKEFLAGS) /F ".\libapr.mak" CFG="libapr - Win32 Debug" RECURSE=1 CLEAN 
++#   cd "..\apr-iconv"
++#
++#!ELSEIF  "$(CFG)" == "libapriconv - x64 Release"
++#
++#"libapr - x64 Release" : 
++#   cd ".\..\apr"
++#   $(MAKE) /$(MAKEFLAGS) /F ".\libapr.mak" CFG="libapr - x64 Release" 
++#   cd "..\apr-iconv"
++#
++#"libapr - x64 ReleaseCLEAN" : 
++#   cd ".\..\apr"
++#   $(MAKE) /$(MAKEFLAGS) /F ".\libapr.mak" CFG="libapr - x64 Release" RECURSE=1 CLEAN 
++#   cd "..\apr-iconv"
++#
++#!ELSEIF  "$(CFG)" == "libapriconv - x64 Debug"
++#
++#"libapr - x64 Debug" : 
++#   cd ".\..\apr"
++#   $(MAKE) /$(MAKEFLAGS) /F ".\libapr.mak" CFG="libapr - x64 Debug" 
++#   cd "..\apr-iconv"
++#
++#"libapr - x64 DebugCLEAN" : 
++#   cd ".\..\apr"
++#   $(MAKE) /$(MAKEFLAGS) /F ".\libapr.mak" CFG="libapr - x64 Debug" RECURSE=1 CLEAN 
++#   cd "..\apr-iconv"
++#
++#!ENDIF 
+ 
+ SOURCE=.\libapriconv.rc
+ 
+-- 
+2.9.0.windows.1
+
