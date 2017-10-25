@@ -48,23 +48,25 @@ del /Q /F .\lib\apr_want.h
 del /Q /F .\lib\apr_allocator.h
 del /Q /F .\lib\apr_thread_mutex.h
 
-mkdir target\include
-mkdir target\bin\iconv
-mkdir target\lib
+mkdir target\include target\bin\iconv target\lib
+mkdir target_dbg\include target_dbg\bin\iconv target_dbg\lib
 
 copy /Y include\*.h target\include\
 copy /Y lib\*.h     target\include\
 copy /Y util\*.h    target\include\
+copy /Y include\*.h target_dbg\include\
+copy /Y lib\*.h     target_dbg\include\
+copy /Y util\*.h    target_dbg\include\
 
 copy /Y x64\Release\iconv\*.so          target\bin\iconv\
-copy /Y x64\Release\iconv\*.pdb         target\bin\iconv\
+copy /Y x64\Release\iconv\*.pdb         target_dbg\bin\iconv\
 copy /Y x64\Release\libapriconv-1.dll   target\bin\
-copy /Y x64\Release\libapriconv-1.pdb   target\bin\
-copy /Y x64\Release\libapriconv_src.pdb target\bin\
+copy /Y x64\Release\libapriconv-1.pdb   target_dbg\bin\
+copy /Y x64\Release\libapriconv_src.pdb target_dbg\bin\
 
 copy /Y x64\Release\libapriconv-1.lib target\lib\
 copy /Y x64\LibR\apriconv-1.lib       target\lib\
-copy /Y x64\LibR\apriconv-1.pdb       target\lib\
+copy /Y x64\LibR\apriconv-1.pdb       target_dbg\lib\
 
 copy /Y AUTHORS target\
 copy /Y CHANGES target\
@@ -73,6 +75,13 @@ copy /Y LICENSE target\
 copy /Y NOTICE  target\
 copy /Y README  target\
 copy /Y STATUS  target\
+copy /Y AUTHORS target_dbg\
+copy /Y CHANGES target_dbg\
+copy /Y COPYING target_dbg\
+copy /Y LICENSE target_dbg\
+copy /Y NOTICE  target_dbg\
+copy /Y README  target_dbg\
+copy /Y STATUS  target_dbg\
 
 for /f %%x in ('pushd %WORKSPACE% ^& git log --pretty^=format:%%h -n 1 ^& popd') do set GIT_HEAD=%%x
 echo %GIT_HEAD%
@@ -80,6 +89,11 @@ echo %GIT_HEAD%
 pushd target
 zip -r -9 %WORKSPACE%\apr-iconv-%BRANCH_OR_TAG%-%GIT_HEAD%-64.zip .
 sha1sum.exe %WORKSPACE%\apr-iconv-%BRANCH_OR_TAG%-%GIT_HEAD%-64.zip>%WORKSPACE%\apr-iconv-%BRANCH_OR_TAG%-%GIT_HEAD%-64.zip.sha1
+popd
+
+pushd target_dbg
+zip -r -9 %WORKSPACE%\apr-iconv-debug-%BRANCH_OR_TAG%-%GIT_HEAD%-64.zip .
+sha1sum.exe %WORKSPACE%\apr-iconv-debug-%BRANCH_OR_TAG%-%GIT_HEAD%-64.zip>%WORKSPACE%\apr-iconv-debug-%BRANCH_OR_TAG%-%GIT_HEAD%-64.zip.sha1
 popd
 
 REM Note that some attributes cannot handle backslashes...
