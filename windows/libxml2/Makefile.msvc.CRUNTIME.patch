@@ -1,0 +1,33 @@
+diff --git a/win32/Makefile.msvc b/win32/Makefile.msvc
+index 115a451..9da45ec 100644
+--- a/win32/Makefile.msvc
++++ b/win32/Makefile.msvc
+@@ -36,14 +36,15 @@ UTILS_INTDIR = int.utils.msvc
+ 
+ # The preprocessor and its options.
+ CPP = cl.exe /EP
+-CPPFLAGS = /nologo /I$(XML_SRCDIR)\include /D "NOLIBTOOL" 
++CPPFLAGS = /nologo /I$(XML_SRCDIR)\include /D "NOLIBTOOL" /MD /O2 /Ob2 /Zi
+ !if "$(WITH_THREADS)" != "no"
+ CPPFLAGS = $(CPPFLAGS) /D "_REENTRANT"
+ !endif
+ 
+ # The compiler and its options.
+ CC = cl.exe
+-CFLAGS = /nologo /D "_WINDOWS" /D "_MBCS" /D "NOLIBTOOL" /W3 /wd4244 /wd4267 $(CRUNTIME)
++CPPFLAGS = $(CPPFLAGS) $(CRUNTIME)
++CFLAGS = /nologo /D "_WINDOWS" /D "_MBCS" /D "NOLIBTOOL" /W3 /wd4244 /wd4267 /MD /O2 /Ob2 /Zi
+ CFLAGS = $(CFLAGS) /I$(XML_SRCDIR) /I$(XML_SRCDIR)\include /I$(INCPREFIX)
+ !if "$(WITH_THREADS)" != "no"
+ CFLAGS = $(CFLAGS) /D "_REENTRANT"
+@@ -101,9 +102,7 @@ ARFLAGS = /nologo
+ CFLAGS = $(CFLAGS) /D "_DEBUG" /Od /Z7
+ LDFLAGS = $(LDFLAGS) /DEBUG
+ !else
+-CFLAGS = $(CFLAGS) /D "NDEBUG" /O2 
+-# commented out as this break VC10 c.f. 634846
+-# LDFLAGS = $(LDFLAGS) /OPT:NOWIN98
++CFLAGS = $(CFLAGS)
+ LDFLAGS = $(LDFLAGS)
+ !endif
+ 
