@@ -1,8 +1,8 @@
 REM @author: Michal Karm Babacek <karm@fedoraproject.org>
 REM This script builds pcre
 
-unzip arch=64,label=%label%\bzip2* -d .\bzip2
-unzip arch=64,label=%label%\zlib* -d .\zlib
+unzip label=%label%\bzip2* -d .\bzip2
+unzip label=%label%\zlib*  -d .\zlib
 
 REM Build environment
 set "PATH=C:\Program Files (x86)\Microsoft Visual Studio\2017\Community\VC\Auxiliary\Build;C:\Program Files\Cppcheck;%PATH%"
