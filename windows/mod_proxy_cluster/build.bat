@@ -130,31 +130,31 @@ $remoteHost = 'localhost'; ^
 $socket = new-object System.Net.Sockets.TcpClient($remoteHost, $port); ^
 $stream = $socket.GetStream(); ^
 $writer = new-object System.IO.StreamWriter($stream); ^
-$writer.Write(\"CONFIG / HTTP/1.1`r`nHost: localhost`r`nContent-Length: 85`r`nUser-Agent: PowerShell`r`nConnection: Keep-Alive`r`n`r`nJVMRoute=fake-worker-1^&Host=127.0.0.1^&Maxattempts=100^&Port=8009^&Type=ajp^&ping=100\"); ^
+$writer.Write(\"CONFIG / HTTP/1.1`r`nHost: localhost`r`nContent-Length: 81`r`nUser-Agent: PowerShell`r`nConnection: Keep-Alive`r`n`r`nJVMRoute=fake-worker-1^&Host=127.0.0.1^&Maxattempts=100^&Port=8009^&Type=ajp^&ping=100\"); ^
 $writer.Flush(); ^
 $stream.close(); ^
 $socket = new-object System.Net.Sockets.TcpClient($remoteHost, $port); ^
 $stream = $socket.GetStream(); ^
 $writer = new-object System.IO.StreamWriter($stream); ^
-$writer.Write(\"ENABLE-APP / HTTP/1.1`r`nHost: localhost`r`nContent-Length: 67`r`nUser-Agent: PowerShell`r`nConnection: Keep-Alive`r`n`r`nJVMRoute=fake-worker-1^&Alias=default-host^&Context=%%2ffake-webapp\"); ^
+$writer.Write(\"ENABLE-APP / HTTP/1.1`r`nHost: localhost`r`nContent-Length: 65`r`nUser-Agent: PowerShell`r`nConnection: Keep-Alive`r`n`r`nJVMRoute=fake-worker-1^&Alias=default-host^&Context=%%2ffake-webapp\"); ^
 $writer.Flush(); ^
 $stream.close(); ^
 $socket = new-object System.Net.Sockets.TcpClient($remoteHost, $port); ^
 $stream = $socket.GetStream(); ^
 $writer = new-object System.IO.StreamWriter($stream); ^
-$writer.Write(\"STATUS / HTTP/1.1`r`nHost: localhost`r`nContent-Length: 33`r`nUser-Agent: PowerShell`r`nConnection: Keep-Alive`r`n`r`nJVMRoute=fake-worker-1^&Load=99\"); ^
+$writer.Write(\"STATUS / HTTP/1.1`r`nHost: localhost`r`nContent-Length: 30`r`nUser-Agent: PowerShell`r`nConnection: Keep-Alive`r`n`r`nJVMRoute=fake-worker-1^&Load=99\"); ^
 $writer.Flush(); ^
 $stream.close();
 powershell -Command "%testcommand%"
 
-REM Test that Apache HTTP Server registered this fake "worker"
+echo "Test that Apache HTTP Server registered this fake worker"
 powershell -Command "for ($j=0; $j -lt 10; $j++) {$url = 'http://localhost:6666/mod_cluster_manager'; $web = New-Object Net.WebClient; [System.Net.ServicePointManager]::ServerCertificateValidationCallback = { $true }; $output = $web.DownloadString($url); [System.Net.ServicePointManager]::ServerCertificateValidationCallback = $null; if ($output -like '*Node fake-worker-1*') { echo 'ok' } else { exit 1 }}; exit 0"
 IF NOT %ERRORLEVEL% == 0 ( type %HTTPD_DEV_HOME%\logs\error_log & type %HTTPD_DEV_HOME%\logs\access_log & exit 1 )
 
-REM Call fake web app (should cause an error, because there is no worker to reply, but definitely must not crash the httpd)
+echo "Call fake web app. It should cause an error, because there is no worker to reply, but definitely must not crash the httpd"
 powershell -Command "$url = 'http://localhost/fake-webapp'; $web = New-Object Net.WebClient; [System.Net.ServicePointManager]::ServerCertificateValidationCallback = { $true }; $output = $web.DownloadString($url); [System.Net.ServicePointManager]::ServerCertificateValidationCallback = $null; echo $output"
 
-REM Check for segmentation faults
+echo "Check for segmentation faults"
 powershell -Command "if(@( Get-Content %HTTPD_SERVER_ROOT%\logs\error_log | Where-Object { $_.Contains('error') -or $_.Contains('fault') -or $_.Contains('AH00427') -or $_.Contains('AH00428') -or $_.Contains('mismatch') } ).Count -gt 0) { exit 1 } else {exit 0 }"
 IF NOT %ERRORLEVEL% == 0 ( echo "SEGMENTATION FAULT" type %HTTPD_SERVER_ROOT%\logs\error_log & type %HTTPD_DEV_HOME%\logs\access_log & exit 1 )
 
