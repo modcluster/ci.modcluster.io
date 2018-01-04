@@ -156,7 +156,7 @@ powershell -Command "$url = 'http://localhost/fake-webapp'; $web = New-Object Ne
 
 echo "Check for segmentation faults"
 powershell -Command "if(@( Get-Content %HTTPD_SERVER_ROOT%\logs\error_log | Where-Object { $_.Contains('error') -or $_.Contains('fault') -or $_.Contains('AH00427') -or $_.Contains('AH00428') -or $_.Contains('mismatch') } ).Count -gt 0) { exit 1 } else {exit 0 }"
-IF NOT %ERRORLEVEL% == 0 ( echo "SEGMENTATION FAULT" type %HTTPD_SERVER_ROOT%\logs\error_log & type %HTTPD_DEV_HOME%\logs\access_log & exit 1 )
+IF NOT %ERRORLEVEL% == 0 ( echo "SEGMENTATION FAULT" & type %HTTPD_SERVER_ROOT%\logs\error_log & type %HTTPD_DEV_HOME%\logs\access_log & exit 1 )
 
 taskkill /im httpd.exe /F
 
