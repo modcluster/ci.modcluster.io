@@ -2,7 +2,10 @@ REM @author: Michal Karm Babacek <karm@fedoraproject.org>
 REM This script builds pcre
 
 unzip label=%label%\bzip2* -d .\bzip2
+IF NOT %ERRORLEVEL% == 0 ( exit 1 )
+
 unzip label=%label%\zlib*  -d .\zlib
+IF NOT %ERRORLEVEL% == 0 ( exit 1 )
 
 REM Build environment
 set "PATH=C:\Program Files (x86)\Microsoft Visual Studio\2017\Community\VC\Auxiliary\Build;C:\Program Files\Cppcheck;%PATH%"
@@ -59,5 +62,5 @@ IF "%RUN_STATIC_ANALYSIS%" equ "true" (
     -I%WORKSPACEPOSSIX%/zlib/include/ ^
     -I%WORKSPACEPOSSIX%/zlib/ ^
     -I%WORKSPACEPOSSIX%/bzip2/include/ ^
-    --output-file=cppcheck.log %WORKSPACEPOSSIX%/src
+    --output-file=cppcheck.log %WORKSPACEPOSSIX%
 )

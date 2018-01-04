@@ -2,7 +2,10 @@ REM @author: Michal Karm Babacek <karm@fedoraproject.org>
 REM This script builds apr
 REM We rely on label being the same. It is probably for the best, gonna keep the same MSVC...
 unzip label=%label%\libxml2* -d .\libxml2
+IF NOT %ERRORLEVEL% == 0 ( exit 1 )
+
 unzip arch=64,label=%label%\OpenSSL* -d .\openssl
+IF NOT %ERRORLEVEL% == 0 ( exit 1 )
 
 mkdir %WORKSPACE%\target\64
 mkdir %WORKSPACE%\build-64
