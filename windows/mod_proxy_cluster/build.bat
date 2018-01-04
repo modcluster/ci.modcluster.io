@@ -155,7 +155,8 @@ echo "Call fake web app. It should cause an error, because there is no worker to
 powershell -Command "$url = 'http://localhost/fake-webapp'; $web = New-Object Net.WebClient; [System.Net.ServicePointManager]::ServerCertificateValidationCallback = { $true }; $output = $web.DownloadString($url); [System.Net.ServicePointManager]::ServerCertificateValidationCallback = $null; echo $output"
 
 echo "Check for segmentation faults"
-powershell -Command "if(@( Get-Content %HTTPD_SERVER_ROOT%\logs\error_log | Where-Object { $_.Contains('error') -or $_.Contains('fault') -or $_.Contains('AH00427') -or $_.Contains('AH00428') -or $_.Contains('mismatch') } ).Count -gt 0) { exit 1 } else {exit 0 }"
+REM Cannot check for $_.Contains('error') -or unless we have a true worker in place.
+powershell -Command "if(@( Get-Content %HTTPD_SERVER_ROOT%\logs\error_log | Where-Object { $_.Contains('fault') -or $_.Contains('AH00427') -or $_.Contains('AH00428') -or $_.Contains('mismatch') } ).Count -gt 0) { exit 1 } else {exit 0 }"
 IF NOT %ERRORLEVEL% == 0 ( echo "SEGMENTATION FAULT" & type %HTTPD_SERVER_ROOT%\logs\error_log & type %HTTPD_DEV_HOME%\logs\access_log & exit 1 )
 
 taskkill /im httpd.exe /F
