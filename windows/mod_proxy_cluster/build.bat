@@ -14,10 +14,10 @@ IF "%DISTRO%" equ "jboss" (
     REM We rely on label being the same. It is probably for the best, gonna keep the same MSVC...
     REM httpd
     del /s /f /q httpd-devel
-    unzip .\httpd\arch=64,label=%label%\httpd*64-devel.zip -d httpd-devel
+    unzip .\httpd\label=%label%\httpd*64-devel.zip -d httpd-devel
     IF NOT %ERRORLEVEL% == 0 ( exit 1 )
     del /s /f /q httpd-prod
-    unzip .\httpd\arch=64,label=%label%\httpd*64.zip -d httpd-prod
+    unzip .\httpd\label=%label%\httpd*64.zip -d httpd-prod
     IF NOT %ERRORLEVEL% == 0 ( exit 1 )
 ) else (
     REM Fetch Apache Lounge Apache HTTP Server distribution
@@ -49,7 +49,8 @@ IF "%DISTRO%" equ "jboss" (
     SET HTTPD_DEV_HOME=%WORKSPACE%\httpd-apache-lounge\Apache24
     REM It is not a good idea to try to generate the mod_proxy.lib file, so:
 
-    copy /Y %WORKSPACE%\ci-scripts\windows\mod_proxy_cluster\apache_lounge_%APACHE_LOUNGE_DISTRO_VERSION%\win64\mod_proxy.lib !HTTPD_DEV_HOME!\lib\mod_proxy.lib
+    REM Not necessary - they've started providing the file to us in their main package
+    REM copy /Y %WORKSPACE%\ci-scripts\windows\mod_proxy_cluster\apache_lounge_%APACHE_LOUNGE_DISTRO_VERSION%\win64\mod_proxy.lib !HTTPD_DEV_HOME!\lib\mod_proxy.lib
 
     REM dumpbin /exports /nologo /out:!HTTPD_DEV_HOME!\lib\mod_proxy.def.tmp !HTTPD_DEV_HOME!\modules\mod_proxy.so
     REM IF NOT %ERRORLEVEL% == 0 ( exit 1 )
@@ -63,7 +64,9 @@ IF "%DISTRO%" equ "jboss" (
 
 SET HTTPD_DEV_HOME_POSSIX=%HTTPD_DEV_HOME:\=/%
 
-cmake -G "NMake Makefiles" -DCMAKE_BUILD_TYPE=Release -DCMAKE_C_FLAGS_RELEASE="/MD /O2 /Ob2 /Wall /Zi" ^
+cmake -G "NMake Makefiles" -DCMAKE_BUILD_TYPE=RELWITHDEBINFO ^
+-DCMAKE_C_FLAGS_RELWITHDEBINFO="/DWIN32 /D_WINDOWS /W3 /MD /Zi /O2 /Ob1 /DNDEBUG" ^
+-DCMAKE_C_FLAGS="/DWIN32 /D_WINDOWS /W3 /MD /Zi /O2 /Ob1 /DNDEBUG" ^
 -DAPR_LIBRARY=%HTTPD_DEV_HOME_POSSIX%/lib/libapr-1.lib ^
 -DAPR_INCLUDE_DIR=%HTTPD_DEV_HOME_POSSIX%/include/ ^
 -DAPACHE_INCLUDE_DIR=%HTTPD_DEV_HOME_POSSIX%/include/ ^
@@ -129,15 +132,31 @@ $stream = $socket.GetStream(); ^
 $writer = new-object System.IO.StreamWriter($stream); ^
 $writer.Write(\"CONFIG / HTTP/1.1`r`nHost: localhost`r`nContent-Length: 85`r`nUser-Agent: PowerShell`r`nConnection: Keep-Alive`r`n`r`nJVMRoute=fake-worker-1^&Host=127.0.0.1^&Maxattempts=100^&Port=8009^&Type=ajp^&ping=100\"); ^
 $writer.Flush(); ^
+$stream.close(); ^
+$socket = new-object System.Net.Sockets.TcpClient($remoteHost, $port); ^
+$stream = $socket.GetStream(); ^
+$writer = new-object System.IO.StreamWriter($stream); ^
 $writer.Write(\"ENABLE-APP / HTTP/1.1`r`nHost: localhost`r`nContent-Length: 67`r`nUser-Agent: PowerShell`r`nConnection: Keep-Alive`r`n`r`nJVMRoute=fake-worker-1^&Alias=default-host^&Context=%%2ffake-webapp\"); ^
 $writer.Flush(); ^
+$stream.close(); ^
+$socket = new-object System.Net.Sockets.TcpClient($remoteHost, $port); ^
+$stream = $socket.GetStream(); ^
+$writer = new-object System.IO.StreamWriter($stream); ^
 $writer.Write(\"STATUS / HTTP/1.1`r`nHost: localhost`r`nContent-Length: 33`r`nUser-Agent: PowerShell`r`nConnection: Keep-Alive`r`n`r`nJVMRoute=fake-worker-1^&Load=99\"); ^
-$writer.Flush();
+$writer.Flush(); ^
+$stream.close();
 powershell -Command "%testcommand%"
 
 REM Test that Apache HTTP Server registered this fake "worker"
 powershell -Command "for ($j=0; $j -lt 10; $j++) {$url = 'http://localhost:6666/mod_cluster_manager'; $web = New-Object Net.WebClient; [System.Net.ServicePointManager]::ServerCertificateValidationCallback = { $true }; $output = $web.DownloadString($url); [System.Net.ServicePointManager]::ServerCertificateValidationCallback = $null; if ($output -like '*Node fake-worker-1*') { echo 'ok' } else { exit 1 }}; exit 0"
-IF NOT %ERRORLEVEL% == 0 ( type %HTTPD_DEV_HOME%\logs\error_log & exit 1 )
+IF NOT %ERRORLEVEL% == 0 ( type %HTTPD_DEV_HOME%\logs\error_log & type %HTTPD_DEV_HOME%\logs\access_log & exit 1 )
+
+REM Call fake web app (should cause an error, because there is no worker to reply, but definitely must not crash the httpd)
+powershell -Command "$url = 'http://localhost/fake-webapp'; $web = New-Object Net.WebClient; [System.Net.ServicePointManager]::ServerCertificateValidationCallback = { $true }; $output = $web.DownloadString($url); [System.Net.ServicePointManager]::ServerCertificateValidationCallback = $null; echo $output"
+
+REM Check for segmentation faults
+powershell -Command "if(@( Get-Content %HTTPD_SERVER_ROOT%\logs\error_log | Where-Object { $_.Contains('error') -or $_.Contains('fault') -or $_.Contains('AH00427') -or $_.Contains('AH00428') -or $_.Contains('mismatch') } ).Count -gt 0) { exit 1 } else {exit 0 }"
+IF NOT %ERRORLEVEL% == 0 ( echo "SEGMENTATION FAULT" type %HTTPD_SERVER_ROOT%\logs\error_log & type %HTTPD_DEV_HOME%\logs\access_log & exit 1 )
 
 taskkill /im httpd.exe /F
 
