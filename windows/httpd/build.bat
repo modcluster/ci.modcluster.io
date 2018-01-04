@@ -69,7 +69,9 @@ REM -DLIBXML2_ICONV_LIBRARIES=%WORKSPACE_POSSIX%/dependencies/libxml2/lib/libico
 
 
 REM CMake. Beware: Command must be shorter than 8191 chars...
-cmake -G "NMake Makefiles" -DCMAKE_BUILD_TYPE=Release -DCMAKE_C_FLAGS_RELEASE="/MD /O2 /Ob2 /W3 /Zi" ^
+cmake -G "NMake Makefiles" -DCMAKE_BUILD_TYPE=RELWITHDEBINFO ^
+-DCMAKE_C_FLAGS_RELWITHDEBINFO="/DWIN32 /D_WINDOWS /W3 /MD /Zi /O2 /Ob1 /DNDEBUG" ^
+-DCMAKE_C_FLAGS="/DWIN32 /D_WINDOWS /W3 /MD /Zi /O2 /Ob1 /DNDEBUG" ^
 -DOPENSSL_ROOT_DIR=%WORKSPACE_POSSIX%/dependencies/openssl ^
 -DLIBXML2_INCLUDE_DIR=%WORKSPACE_POSSIX%/dependencies/libxml2/include/libxml2/ ^
 -DLIBXML2_LIBRARIES=%WORKSPACE_POSSIX%/dependencies/libxml2/lib/libxml2.lib;%WORKSPACE_POSSIX%/dependencies/libxml2/lib/libxml2_a.lib;^
@@ -84,6 +86,7 @@ cmake -G "NMake Makefiles" -DCMAKE_BUILD_TYPE=Release -DCMAKE_C_FLAGS_RELEASE="/
 -DAPU_HAVE_CRYPTO=ON ^
 -DAPR_HAS_XLATE=ON ^
 -DAPR_HAS_LDAP=ON ^
+-DINSTALL_PDB=ON ^
 -DPCRE_LIBRARIES=%WORKSPACE_POSSIX%/dependencies/bzip2/bz2.lib;%WORKSPACE_POSSIX%/dependencies/pcre/lib/pcre.lib;^
 %WORKSPACE_POSSIX%/dependencies/pcre/lib/pcrecpp.lib;%WORKSPACE_POSSIX%/dependencies/pcre/lib/pcreposix.lib ^
 -DPCRE_INCLUDE_DIR=%WORKSPACE_POSSIX%/dependencies/pcre/include/ -DLUA_LIBRARIES=%WORKSPACE_POSSIX%/dependencies/lua/lib/lua-v5-3-4.lib;^
