@@ -1,12 +1,22 @@
 diff --git a/CMakeLists.txt b/CMakeLists.txt
-index 3cd8a34..ceaa9ab 100644
+index e2d5020..e5cf6d9 100644
 --- a/CMakeLists.txt
 +++ b/CMakeLists.txt
-@@ -408,6 +408,7 @@ SET(mod_heartbeat_extra_libs         mod_watchdog)
- SET(mod_http2_requires               NGHTTP2_FOUND)
+@@ -409,6 +409,7 @@ SET(mod_http2_requires               NGHTTP2_FOUND)
  SET(mod_http2_extra_defines          ssize_t=long)
+ SET(mod_http2_extra_includes         ${NGHTTP2_INCLUDE_DIR})
  SET(mod_http2_extra_libs             ${NGHTTP2_LIBRARIES})
 +SET(mod_http2_extra_includes         ${NGHTTP2_INCLUDE_DIR})
  SET(mod_http2_extra_sources
    modules/http2/h2_alt_svc.c
    modules/http2/h2_bucket_eos.c      modules/http2/h2_config.c
+@@ -423,6 +424,9 @@ SET(mod_http2_extra_sources
+   modules/http2/h2_task.c            modules/http2/h2_util.c
+   modules/http2/h2_workers.c
+ )
++SET(mod_lbmethod_bybusyness_extra_libs   mod_proxy)
++SET(mod_lbmethod_byrequests_extra_libs   mod_proxy)
++SET(mod_lbmethod_bytraffic_extra_libs    mod_proxy)
+ SET(mod_ldap_extra_defines           LDAP_DECLARE_EXPORT)
+ SET(mod_ldap_extra_libs              wldap32)
+ SET(mod_ldap_extra_sources
