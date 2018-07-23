@@ -1,0 +1,12 @@
+diff --git a/CMakeLists.txt b/CMakeLists.txt
+index 429ce54..e46e4cb 100644
+--- a/CMakeLists.txt
++++ b/CMakeLists.txt
+@@ -448,6 +448,7 @@ SET(mod_http2_requires               NGHTTP2_FOUND)
+ SET(mod_http2_extra_defines          ssize_t=long)
+ SET(mod_http2_extra_includes         ${NGHTTP2_INCLUDE_DIR})
+ SET(mod_http2_extra_libs             ${NGHTTP2_LIBRARIES})
++SET(mod_http2_extra_includes         ${NGHTTP2_INCLUDE_DIR})
+ SET(mod_http2_extra_sources
+   modules/http2/h2_alt_svc.c
+   modules/http2/h2_bucket_eos.c      modules/http2/h2_config.c
