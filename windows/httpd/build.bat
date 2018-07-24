@@ -220,15 +220,18 @@ powershell -Command "(gc %CMAKE_INSTALL_PREFIX%\conf\extra\proxy-html.conf) -rep
 IF NOT %ERRORLEVEL% == 0 ( exit 1 )
 powershell -Command "(gc %CMAKE_INSTALL_PREFIX%\conf\extra\httpd-ssl.conf) -replace ':/ssl_scache', ':@HTTPD_SERVER_ROOT_POSIX@/cache/ssl_scache' | Out-File -Encoding ascii %CMAKE_INSTALL_PREFIX%\conf\extra\httpd-ssl.conf"
 IF NOT %ERRORLEVEL% == 0 ( exit 1 )
-powershell -Command "(gc %CMAKE_INSTALL_PREFIX%\conf\extra\httpd-ssl.conf) -replace '/error_log', 'logs/ssl_error_log' | Out-File -Encoding ascii %CMAKE_INSTALL_PREFIX%\conf\extra\httpd-ssl.conf"
+REM In other words, if BRANCH_OR_TAG *contains* "2.4", execute the IF body...
+if NOT "%BRANCH_OR_TAG%"=="%BRANCH_OR_TAG:2.4=%" (
+    powershell -Command "(gc %CMAKE_INSTALL_PREFIX%\conf\extra\httpd-ssl.conf) -replace '/error_log', 'logs/ssl_error_log' | Out-File -Encoding ascii %CMAKE_INSTALL_PREFIX%\conf\extra\httpd-ssl.conf"
+    IF NOT %ERRORLEVEL% == 0 ( exit 1 )
+    powershell -Command "(gc %CMAKE_INSTALL_PREFIX%\conf\extra\httpd-ssl.conf) -replace '/access_log', 'logs/ssl_access_log' | Out-File -Encoding ascii %CMAKE_INSTALL_PREFIX%\conf\extra\httpd-ssl.conf"
+    IF NOT %ERRORLEVEL% == 0 ( exit 1 )
+    powershell -Command "(gc %CMAKE_INSTALL_PREFIX%\conf\extra\httpd-ssl.conf) -replace '/ssl_request_log', 'logs/ssl_request_log' | Out-File -Encoding ascii %CMAKE_INSTALL_PREFIX%\conf\extra\httpd-ssl.conf"
+    IF NOT %ERRORLEVEL% == 0 ( exit 1 )
+)
+powershell -Command "(gc %CMAKE_INSTALL_PREFIX%\conf\extra\httpd-ssl.conf) -replace 'SSLCertificateFile .*', '@HTTPD_SERVER_ROOT_POSIX@/conf/ssl/certs/localhost.crt' | Out-File -Encoding ascii %CMAKE_INSTALL_PREFIX%\conf\extra\httpd-ssl.conf"
 IF NOT %ERRORLEVEL% == 0 ( exit 1 )
-powershell -Command "(gc %CMAKE_INSTALL_PREFIX%\conf\extra\httpd-ssl.conf) -replace '/access_log', 'logs/ssl_access_log' | Out-File -Encoding ascii %CMAKE_INSTALL_PREFIX%\conf\extra\httpd-ssl.conf"
-IF NOT %ERRORLEVEL% == 0 ( exit 1 )
-powershell -Command "(gc %CMAKE_INSTALL_PREFIX%\conf\extra\httpd-ssl.conf) -replace '/ssl_request_log', 'logs/ssl_request_log' | Out-File -Encoding ascii %CMAKE_INSTALL_PREFIX%\conf\extra\httpd-ssl.conf"
-IF NOT %ERRORLEVEL% == 0 ( exit 1 )
-powershell -Command "(gc %CMAKE_INSTALL_PREFIX%\conf\extra\httpd-ssl.conf) -replace '/server.crt', '@HTTPD_SERVER_ROOT_POSIX@/conf/ssl/certs/localhost.crt' | Out-File -Encoding ascii %CMAKE_INSTALL_PREFIX%\conf\extra\httpd-ssl.conf"
-IF NOT %ERRORLEVEL% == 0 ( exit 1 )
-powershell -Command "(gc %CMAKE_INSTALL_PREFIX%\conf\extra\httpd-ssl.conf) -replace '/server.key', '@HTTPD_SERVER_ROOT_POSIX@/conf/ssl/private/localhost.key' | Out-File -Encoding ascii %CMAKE_INSTALL_PREFIX%\conf\extra\httpd-ssl.conf"
+powershell -Command "(gc %CMAKE_INSTALL_PREFIX%\conf\extra\httpd-ssl.conf) -replace 'SSLCertificateKeyFile .*', '@HTTPD_SERVER_ROOT_POSIX@/conf/ssl/private/localhost.key' | Out-File -Encoding ascii %CMAKE_INSTALL_PREFIX%\conf\extra\httpd-ssl.conf"
 IF NOT %ERRORLEVEL% == 0 ( exit 1 )
 
 REM Add custom It works! HTML page.
