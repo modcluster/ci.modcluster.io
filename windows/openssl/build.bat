@@ -10,15 +10,25 @@ call vcvars64
 mkdir %WORKSPACE%\target
 
 perl Configure VC-WIN64A --prefix=%WORKSPACE%\target
-call ms\do_nasm
-call ms\do_win64a
 
-nmake -f ms\ntdll.mak
-nmake -f ms\ntdll.mak test
-if ERRORLEVEL 1 (
-  exit /B 1
+
+if NOT "%TAGNAME%"=="%TAGNAME:OpenSSL_1_0_2=%" (
+    call ms\do_nasm
+    call ms\do_win64a
+    nmake -f ms\ntdll.mak
+    IF NOT %ERRORLEVEL% == 0 ( exit 1 )
+    nmake -f ms\ntdll.mak test
+    IF NOT %ERRORLEVEL% == 0 ( exit 1 )
+    nmake -f ms\ntdll.mak install
+    IF NOT %ERRORLEVEL% == 0 ( exit 1 )
+) ELSE (
+    nmake
+    IF NOT %ERRORLEVEL% == 0 ( exit 1 )
+    nmake test
+    IF NOT %ERRORLEVEL% == 0 ( exit 1 )
+    nmake install
+    IF NOT %ERRORLEVEL% == 0 ( exit 1 )
 )
-nmake -f ms\ntdll.mak install
 
 copy %WORKSPACE%\LICENCE %WORKSPACE%\target\
 
