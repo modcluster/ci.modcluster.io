@@ -11,7 +11,6 @@ mkdir %WORKSPACE%\target
 
 perl Configure VC-WIN64A --prefix=%WORKSPACE%\target
 
-
 if NOT "%TAGNAME%"=="%TAGNAME:OpenSSL_1_0_2=%" (
     call ms\do_nasm
     call ms\do_win64a
@@ -30,7 +29,10 @@ if NOT "%TAGNAME%"=="%TAGNAME:OpenSSL_1_0_2=%" (
     IF NOT %ERRORLEVEL% == 0 ( exit 1 )
 )
 
-copy %WORKSPACE%\LICENCE %WORKSPACE%\target\
+copy %WORKSPACE%\AUTHORS %WORKSPACE%\target\
+copy %WORKSPACE%\CHANGES %WORKSPACE%\target\
+copy %WORKSPACE%\CONTRIBUTING %WORKSPACE%\target\
+copy %WORKSPACE%\LICENSE %WORKSPACE%\target\
 
 pushd %WORKSPACE%\target\
 zip -r -9 %WORKSPACE%\%TAGNAME%-64.zip .
