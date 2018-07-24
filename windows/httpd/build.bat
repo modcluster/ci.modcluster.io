@@ -66,7 +66,6 @@ cd %WORKSPACE%\cmakebuild
 REM -DLIBXML2_ICONV_INCLUDE_DIR=%WORKSPACE_POSSIX%/dependencies/libxml2/include/ ^
 REM -DLIBXML2_ICONV_LIBRARIES=%WORKSPACE_POSSIX%/dependencies/libxml2/lib/libiconv.lib;%WORKSPACE_POSSIX%/dependencies/libxml2/lib/libcharset.lib ^
 
-
 REM CMake. Beware: Command must be shorter than 8191 chars...
 cmake -G "NMake Makefiles" -DCMAKE_BUILD_TYPE=RELWITHDEBINFO ^
 -DCMAKE_C_FLAGS_RELWITHDEBINFO="/DWIN32 /D_WINDOWS /W3 /MD /Zi /O2 /Ob1 /DNDEBUG" ^
@@ -263,9 +262,19 @@ if(@( Get-Content %CMAKE_INSTALL_PREFIX%\README.md ^| Where-Object { $_.Contains
 $c.DownloadFile($url, $file);
 powershell -Command "%downloadCommand%"
 
+REM GIT_HEAD for branches such as trunk or 2.4.x
+for /f %%x in ('pushd %WORKSPACE% ^& git log --pretty^=format:%%h -n 1 ^& popd') do set GIT_HEAD=%%x
+echo GIT_HEAD: %GIT_HEAD%
+IF "%HEADS_OR_TAGS%" equ "heads" (
+    SET HTTPD_DEVEL_ZIP_PATH=%WORKSPACE%\httpd-%BRANCH_OR_TAG%-%GIT_HEAD%-win.64-devel.zip
+    SET HTTPD_ZIP_PATH=%WORKSPACE%\httpd-%BRANCH_OR_TAG%-%GIT_HEAD%-win.64.zip
+) ELSE (
+    SET HTTPD_DEVEL_ZIP_PATH=%WORKSPACE%\httpd-%BRANCH_OR_TAG%-win.64-devel.zip
+    SET HTTPD_ZIP_PATH=%WORKSPACE%\httpd-%BRANCH_OR_TAG%-win.64.zip
+)
+
 echo Package the big, devel package
 pushd %WORKSPACE%
-SET HTTPD_DEVEL_ZIP_PATH=%WORKSPACE%\httpd-%BRANCH_OR_TAG%-win.64-devel.zip
 zip -r -9 %HTTPD_DEVEL_ZIP_PATH% httpd-%BRANCH_OR_TAG%
 IF NOT %ERRORLEVEL% == 0 ( exit 1 )
 popd
@@ -329,7 +338,6 @@ IF NOT %ERRORLEVEL% == 0 ( exit 1 )
 rmdir /s /q conf\original
 rmdir /s /q include
 powershell -Command "get-childitem . -include *.pdb,test*.exe,*test.exe,runsuite*,*.lib,*.exp -recurse | ForEach {(Remove-Item $_)}"
-SET HTTPD_ZIP_PATH=%WORKSPACE%\httpd-%BRANCH_OR_TAG%-win.64.zip
 zip -r -9 %HTTPD_ZIP_PATH% .
 IF NOT %ERRORLEVEL% == 0 ( exit 1 )
 popd
