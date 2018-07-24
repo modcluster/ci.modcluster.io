@@ -9,9 +9,8 @@ call vcvars64
 
 mkdir %WORKSPACE%\target
 
-perl Configure VC-WIN64A --prefix=%WORKSPACE%\target
-
 if NOT "%TAGNAME%"=="%TAGNAME:OpenSSL_1_0_2=%" (
+    perl Configure VC-WIN64A --prefix=%WORKSPACE%\target
     call ms\do_nasm
     call ms\do_win64a
     nmake -f ms\ntdll.mak
@@ -20,7 +19,9 @@ if NOT "%TAGNAME%"=="%TAGNAME:OpenSSL_1_0_2=%" (
     IF NOT %ERRORLEVEL% == 0 ( exit 1 )
     nmake -f ms\ntdll.mak install
     IF NOT %ERRORLEVEL% == 0 ( exit 1 )
-) ELSE (
+) else (
+    mkdir %WORKSPACE%\target\ssl
+    perl Configure VC-WIN64A --prefix=%WORKSPACE%\target --openssldir=%WORKSPACE%\target\ssl
     nmake
     IF NOT %ERRORLEVEL% == 0 ( exit 1 )
     nmake test
