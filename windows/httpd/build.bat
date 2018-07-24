@@ -50,6 +50,10 @@ if exist ci-scripts\windows\httpd\httpd-%BRANCH_OR_TAG%_CMakeLists.txt.patch (
     patch.exe --verbose -p1 CMakeLists.txt -i ci-scripts\windows\httpd\httpd-%BRANCH_OR_TAG%_CMakeLists.txt.patch
 )
 
+IF "%ASFBZ-62563%" equ "true" (
+    patch.exe --verbose -p1 modules\ssl\ssl_engine_pphrase.c -i ci-scripts\windows\httpd\ASFBZ-62563.jorton.patch
+)
+
 REM Note that some attributes cannot handle backslashes...
 SET WORKSPACE_POSSIX=%WORKSPACE:\=/%
 
