@@ -318,6 +318,8 @@ powershell -Command "(gc %HTTPD_SERVER_ROOT%\conf\httpd.conf) -replace '# LoadMo
 IF NOT %ERRORLEVEL% == 0 ( type %HTTPD_SERVER_ROOT%\logs\error_log & exit 1 )
 powershell -Command "(gc %HTTPD_SERVER_ROOT%\conf\httpd.conf) -replace 'LoadModule foo_module', '# LoadModule foo_module' | Out-File -encoding ascii %HTTPD_SERVER_ROOT%\conf\httpd.conf"
 IF NOT %ERRORLEVEL% == 0 ( type %HTTPD_SERVER_ROOT%\logs\error_log & exit 1 )
+powershell -Command "(gc %HTTPD_SERVER_ROOT%\conf\extra\httpd-policy.conf) -replace ' enforce', ' log' | Out-File -Encoding ascii %HTTPD_SERVER_ROOT%\conf\extra\httpd-policy.conf"
+IF NOT %ERRORLEVEL% == 0 ( type %HTTPD_SERVER_ROOT%\logs\error_log & exit 1 )
 mkdir %HTTPD_SERVER_ROOT%\docs\dummy-host.example.com
 mkdir %HTTPD_SERVER_ROOT%\docs\dummy-host2.example.com
 start /B cmd /C httpd.exe
@@ -375,11 +377,13 @@ powershell -Command "Start-Sleep -s 10"
 
 echo Smoke test trimmed package - all modules
 powershell -Command "(gc %HTTPD_SERVER_ROOT%\conf\httpd.conf) -replace '#Include conf/extra/', 'Include conf/extra/' | Out-File -encoding ascii %HTTPD_SERVER_ROOT%\conf\httpd.conf"
-IF NOT %ERRORLEVEL% == 0 ( exit 1 )
+IF NOT %ERRORLEVEL% == 0 ( type %HTTPD_SERVER_ROOT%\logs\error_log & exit 1 )
 powershell -Command "(gc %HTTPD_SERVER_ROOT%\conf\httpd.conf) -replace '# LoadModule', 'LoadModule' | Out-File -encoding ascii %HTTPD_SERVER_ROOT%\conf\httpd.conf"
-IF NOT %ERRORLEVEL% == 0 ( exit 1 )
+IF NOT %ERRORLEVEL% == 0 ( type %HTTPD_SERVER_ROOT%\logs\error_log & exit 1 )
 powershell -Command "(gc %HTTPD_SERVER_ROOT%\conf\httpd.conf) -replace 'LoadModule foo_module', '# LoadModule foo_module' | Out-File -encoding ascii %HTTPD_SERVER_ROOT%\conf\httpd.conf"
-IF NOT %ERRORLEVEL% == 0 ( exit 1 )
+IF NOT %ERRORLEVEL% == 0 ( type %HTTPD_SERVER_ROOT%\logs\error_log & exit 1 )
+powershell -Command "(gc %HTTPD_SERVER_ROOT%\conf\extra\httpd-policy.conf) -replace ' enforce', ' log' | Out-File -Encoding ascii %HTTPD_SERVER_ROOT%\conf\extra\httpd-policy.conf"
+IF NOT %ERRORLEVEL% == 0 ( type %HTTPD_SERVER_ROOT%\logs\error_log & exit 1 )
 mkdir %HTTPD_SERVER_ROOT%\docs\dummy-host.example.com
 mkdir %HTTPD_SERVER_ROOT%\docs\dummy-host2.example.com
 start /B cmd /C httpd.exe
