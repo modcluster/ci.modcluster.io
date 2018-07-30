@@ -50,7 +50,7 @@ if exist ci-scripts\windows\httpd\httpd-%BRANCH_OR_TAG%_CMakeLists.txt.patch (
     patch.exe --verbose -p1 CMakeLists.txt -i ci-scripts\windows\httpd\httpd-%BRANCH_OR_TAG%_CMakeLists.txt.patch
 )
 if "%BRANCH_OR_TAG%" equ "trunk" (
-    patch.exe --verbose -p1 docs/conf/extra/httpd-policy.conf.in -i ci-scripts\windows\httpd\httpd-policy.conf.in.patch
+    patch.exe --verbose -p1 -i ci-scripts\windows\httpd\ASF-BZ-62567.patch
 )
 
 REM Note that some attributes cannot handle backslashes...
@@ -318,6 +318,8 @@ powershell -Command "(gc %HTTPD_SERVER_ROOT%\conf\httpd.conf) -replace '# LoadMo
 IF NOT %ERRORLEVEL% == 0 ( type %HTTPD_SERVER_ROOT%\logs\error_log & exit 1 )
 powershell -Command "(gc %HTTPD_SERVER_ROOT%\conf\httpd.conf) -replace 'LoadModule foo_module', '# LoadModule foo_module' | Out-File -encoding ascii %HTTPD_SERVER_ROOT%\conf\httpd.conf"
 IF NOT %ERRORLEVEL% == 0 ( type %HTTPD_SERVER_ROOT%\logs\error_log & exit 1 )
+powershell -Command "(gc %HTTPD_SERVER_ROOT%\conf\extra\httpd-policy.conf) -replace ' enforce', ' log' | Out-File -Encoding ascii %HTTPD_SERVER_ROOT%\conf\extra\httpd-policy.conf"
+IF NOT %ERRORLEVEL% == 0 ( type %HTTPD_SERVER_ROOT%\logs\error_log & exit 1 )
 mkdir %HTTPD_SERVER_ROOT%\docs\dummy-host.example.com
 mkdir %HTTPD_SERVER_ROOT%\docs\dummy-host2.example.com
 start /B cmd /C httpd.exe
@@ -375,11 +377,13 @@ powershell -Command "Start-Sleep -s 10"
 
 echo Smoke test trimmed package - all modules
 powershell -Command "(gc %HTTPD_SERVER_ROOT%\conf\httpd.conf) -replace '#Include conf/extra/', 'Include conf/extra/' | Out-File -encoding ascii %HTTPD_SERVER_ROOT%\conf\httpd.conf"
-IF NOT %ERRORLEVEL% == 0 ( exit 1 )
+IF NOT %ERRORLEVEL% == 0 ( type %HTTPD_SERVER_ROOT%\logs\error_log & exit 1 )
 powershell -Command "(gc %HTTPD_SERVER_ROOT%\conf\httpd.conf) -replace '# LoadModule', 'LoadModule' | Out-File -encoding ascii %HTTPD_SERVER_ROOT%\conf\httpd.conf"
-IF NOT %ERRORLEVEL% == 0 ( exit 1 )
+IF NOT %ERRORLEVEL% == 0 ( type %HTTPD_SERVER_ROOT%\logs\error_log & exit 1 )
 powershell -Command "(gc %HTTPD_SERVER_ROOT%\conf\httpd.conf) -replace 'LoadModule foo_module', '# LoadModule foo_module' | Out-File -encoding ascii %HTTPD_SERVER_ROOT%\conf\httpd.conf"
-IF NOT %ERRORLEVEL% == 0 ( exit 1 )
+IF NOT %ERRORLEVEL% == 0 ( type %HTTPD_SERVER_ROOT%\logs\error_log & exit 1 )
+powershell -Command "(gc %HTTPD_SERVER_ROOT%\conf\extra\httpd-policy.conf) -replace ' enforce', ' log' | Out-File -Encoding ascii %HTTPD_SERVER_ROOT%\conf\extra\httpd-policy.conf"
+IF NOT %ERRORLEVEL% == 0 ( type %HTTPD_SERVER_ROOT%\logs\error_log & exit 1 )
 mkdir %HTTPD_SERVER_ROOT%\docs\dummy-host.example.com
 mkdir %HTTPD_SERVER_ROOT%\docs\dummy-host2.example.com
 start /B cmd /C httpd.exe
