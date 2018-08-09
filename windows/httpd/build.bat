@@ -49,9 +49,6 @@ REM Patch CMakeLists.txt?
 if exist ci-scripts\windows\httpd\httpd-%BRANCH_OR_TAG%_CMakeLists.txt.patch (
     patch.exe --verbose -p1 CMakeLists.txt -i ci-scripts\windows\httpd\httpd-%BRANCH_OR_TAG%_CMakeLists.txt.patch
 )
-if "%BRANCH_OR_TAG%" equ "trunk" (
-    patch.exe --verbose -p1 -i ci-scripts\windows\httpd\ASF-BZ-62567.patch
-)
 
 REM Note that some attributes cannot handle backslashes...
 SET WORKSPACE_POSSIX=%WORKSPACE:\=/%
