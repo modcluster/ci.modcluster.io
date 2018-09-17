@@ -21,7 +21,7 @@ if NOT "%TAGNAME%"=="%TAGNAME:OpenSSL_1_0_2=%" (
     IF NOT %ERRORLEVEL% == 0 ( exit 1 )
 ) else (
     mkdir %WORKSPACE%\target\ssl
-    perl Configure VC-WIN64A --prefix=%WORKSPACE%\target --openssldir=%WORKSPACE%\target\ssl
+    perl Configure VC-WIN64A enable-tls1_3 --prefix=%WORKSPACE%\target --openssldir=%WORKSPACE%\target\ssl
     nmake
     IF NOT %ERRORLEVEL% == 0 ( exit 1 )
     nmake test
