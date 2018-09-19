@@ -35,7 +35,7 @@ copy %WORKSPACE%\CHANGES %WORKSPACE%\target\
 copy %WORKSPACE%\CONTRIBUTING %WORKSPACE%\target\
 copy %WORKSPACE%\LICENSE %WORKSPACE%\target\
 
-if "%TAGNAME%"=="%TAGNAME:OpenSSL_1_1_1=%" (
+if NOT "%TAGNAME%"=="%TAGNAME:OpenSSL_1_1_1=%" (
     copy %WORKSPACE%\ms\applink.c %WORKSPACE%\target\include\openssl\applink.c
 )
 
