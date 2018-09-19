@@ -35,6 +35,10 @@ copy %WORKSPACE%\CHANGES %WORKSPACE%\target\
 copy %WORKSPACE%\CONTRIBUTING %WORKSPACE%\target\
 copy %WORKSPACE%\LICENSE %WORKSPACE%\target\
 
+if "%TAGNAME%"=="%TAGNAME:OpenSSL_1_1_1=%" (
+    copy %WORKSPACE%\ms\applink.c %WORKSPACE%\target\include\openssl\applink.c
+)
+
 pushd %WORKSPACE%\target\
 zip -r -9 %WORKSPACE%\%TAGNAME%-64.zip .
 sha1sum.exe %WORKSPACE%\%TAGNAME%-64.zip>%WORKSPACE%\%TAGNAME%-64.zip.sha1
