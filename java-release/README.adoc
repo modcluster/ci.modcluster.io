@@ -1,0 +1,42 @@
+= Release Scripting
+
+Welcome to containerized release process for mod_cluster container integration modules.
+
+Easy, reproducible, safe.
+
+== Building Release Docker Image
+
+In case you need to rebuild the Docker release image, build and deploy as follows:
+
+    docker build -t modcluster/mod_cluster-java-release:master .
+    docker push modcluster/mod_cluster-java-release:master
+
+== Steps
+
+. Prepare https://github.com/modcluster/mod_cluster branch for release.
+. Tag the release using `maven-release-plugin`.
+
+    mvn release:prepare -P dist -DautoVersionSubmodules=true
+
+. Inspect, verify the tag and push it upstream.
+
+    git push upstream
+    git push upstream 1.4.0.Final
+
+. Perform a release using the container image changing the parameters as necessary:
+
+    export JBOSS_USERNAME=username
+    export JBOSS_PASSWORD=password
+    docker run -e TAG=1.4.0.Final -e JBOSS_USERNAME -e JBOSS_PASSWORD modcluster/mod_cluster-java-release:master
+
+. Check, close and promote the staging repository: https://repository.jboss.org/nexus/index.html#stagingRepositories
+
+. Release version in Jira: https://issues.jboss.org/plugins/servlet/project-config/MODCLUSTER/versions
+
+== Testing
+
+To test or release custom branches from custom GitHub repositories you can setup the release step with `GITHUB_ORGANIZATION` and `GITHUB_REPOSITORY`:
+
+    docker run -e TAG=MODCLUSTER-686 -e GITHUB_ORGANIZATION=rhusar -e GITHUB_REPOSITORY=mod_cluster -e JBOSS_USERNAME -e JBOSS_PASSWORD modcluster/mod_cluster-java-release:master
+
+Enjoy. ― Rado
