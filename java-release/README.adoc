@@ -8,7 +8,7 @@ Easy, reproducible, safe.
 
 In case you need to rebuild the Docker release image, build and deploy as follows:
 
-    docker build -t modcluster/mod_cluster-java-release:master .
+    docker build --no-cache -t modcluster/mod_cluster-java-release:master .
     docker push modcluster/mod_cluster-java-release:master
 
 == Steps
