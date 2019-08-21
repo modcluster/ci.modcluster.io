@@ -28,7 +28,7 @@ In case you need to rebuild the Docker release image, build and deploy as follow
 
     export JBOSS_USERNAME=username
     export JBOSS_PASSWORD=password
-    docker run -e TAG=1.4.0.Final -e JBOSS_USERNAME -e JBOSS_PASSWORD modcluster/mod_cluster-java-release:master
+    docker run -e TAG=1.4.0.Final -e JAVA_VERSION=1.8.0 -e JBOSS_USERNAME -e JBOSS_PASSWORD modcluster/mod_cluster-java-release:master
 
 . Check, close and promote the staging repository: https://repository.jboss.org/nexus/index.html#stagingRepositories
 
