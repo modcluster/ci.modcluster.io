@@ -2,7 +2,7 @@
 
 Welcome to containerized release process for mod_cluster container integration modules.
 
-Easy, reproducible, safe.
+Easy, reproducible, secure.
 
 == Building Release Docker Image
 
