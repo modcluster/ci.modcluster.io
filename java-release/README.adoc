@@ -32,7 +32,7 @@ In case you need to rebuild the Docker release image, build and deploy as follow
 
 . Check, close and promote the staging repository: https://repository.jboss.org/nexus/index.html#stagingRepositories
 
-. Release version in Jira: https://issues.jboss.org/plugins/servlet/project-config/MODCLUSTER/versions
+. Release version in Jira: https://issues.redhat.com/plugins/servlet/project-config/MODCLUSTER/versions
 
 == Testing
 
