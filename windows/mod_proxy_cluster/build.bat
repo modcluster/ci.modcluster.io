@@ -21,11 +21,15 @@ IF "%DISTRO%" equ "jboss" (
     IF NOT %ERRORLEVEL% == 0 ( exit 1 )
 ) else (
     REM Fetch Apache Lounge Apache HTTP Server distribution
-    if not exist httpd-%APACHE_LOUNGE_DISTRO_VERSION%-Win64-VC16.zip (
-        powershell -Command "[Net.ServicePointManager]::SecurityProtocol = "Tls12, Tls11, Tls, Ssl3"; $c = New-Object System.Net.WebClient; $url = 'https://www.apachelounge.com/download/VS16/binaries/httpd-%APACHE_LOUNGE_DISTRO_VERSION%-win64-VS16.zip'; $file = '%WORKSPACE%\httpd-%APACHE_LOUNGE_DISTRO_VERSION%-Win64-VC16.zip'; $c.DownloadFile($url, $file);"
+    if not exist httpd-%APACHE_LOUNGE_DISTRO_VERSION%-win64-VC16.zip (
+        powershell -Command "[Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12; $c = New-Object System.Net.WebClient; $url = 'https://www.apachelounge.com/download/VS16/binaries/httpd-%APACHE_LOUNGE_DISTRO_VERSION%-win64-VS16.zip'; $file = '%WORKSPACE%\httpd-%APACHE_LOUNGE_DISTRO_VERSION%-win64-VC16.zip'; $c.DownloadFile($url, $file);"
+    )
+    if not exist httpd-%APACHE_LOUNGE_DISTRO_VERSION%-win64-VC16.zip (
+        echo Download failed.
+        exit 1
     )
     del /s /f /q httpd-apache-lounge
-    unzip httpd-%APACHE_LOUNGE_DISTRO_VERSION%-Win64-VC16.zip -d httpd-apache-lounge
+    unzip httpd-%APACHE_LOUNGE_DISTRO_VERSION%-win64-VC16.zip -d httpd-apache-lounge
     IF NOT %ERRORLEVEL% == 0 ( exit 1 )
 )
 
@@ -179,7 +183,7 @@ REM Prepare the distribution
 IF "%DISTRO%" equ "jboss" (
     SET DISTRO_TARGET_DIR=mod_proxy_cluster-%MOD_PROXY_CLUSTER_VERSION%-httpd-%JBOSS_HTTPD_VERSION%-win64
 ) else (
-    SET DISTRO_TARGET_DIR=mod_proxy_cluster-%MOD_PROXY_CLUSTER_VERSION%-apachelounge-%APACHE_LOUNGE_DISTRO_VERSION%-Win64
+    SET DISTRO_TARGET_DIR=mod_proxy_cluster-%MOD_PROXY_CLUSTER_VERSION%-apachelounge-%APACHE_LOUNGE_DISTRO_VERSION%-win64
 )
 
 mkdir %WORKSPACE%\%DISTRO_TARGET_DIR%\conf\extra
