@@ -22,7 +22,7 @@ IF "%DISTRO%" equ "jboss" (
 ) else (
     REM Fetch Apache Lounge Apache HTTP Server distribution
     if not exist httpd-%APACHE_LOUNGE_DISTRO_VERSION%-Win64-VC16.zip (
-        powershell -Command "$c = New-Object System.Net.WebClient; $url = 'https://www.apachelounge.com/download/VS16/binaries/httpd-%APACHE_LOUNGE_DISTRO_VERSION%-win64-VS16.zip'; $file = '%WORKSPACE%\httpd-%APACHE_LOUNGE_DISTRO_VERSION%-Win64-VC16.zip'; $c.DownloadFile($url, $file);"
+        powershell -Command "[Net.ServicePointManager]::SecurityProtocol = "Tls12, Tls11, Tls, Ssl3"; $c = New-Object System.Net.WebClient; $url = 'https://www.apachelounge.com/download/VS16/binaries/httpd-%APACHE_LOUNGE_DISTRO_VERSION%-win64-VS16.zip'; $file = '%WORKSPACE%\httpd-%APACHE_LOUNGE_DISTRO_VERSION%-Win64-VC16.zip'; $c.DownloadFile($url, $file);"
     )
     del /s /f /q httpd-apache-lounge
     unzip httpd-%APACHE_LOUNGE_DISTRO_VERSION%-Win64-VC16.zip -d httpd-apache-lounge
