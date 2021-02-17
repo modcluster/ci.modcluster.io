@@ -19,7 +19,7 @@ In case you need to rebuild the Docker release image, build and deploy as follow
 
     mvn release:prepare -P dist -DautoVersionSubmodules=true
 
-. Inspect, verify the tag and push it upstream.
+. Inspect, verify the tag and push it upstream (since 1.4 release plugin is configured to do this automatically thus make sure to verify branch before preparing the release):
 
     git push upstream
     git push upstream 1.4.0.Final
