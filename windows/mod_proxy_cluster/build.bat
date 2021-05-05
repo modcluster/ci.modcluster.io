@@ -5,31 +5,36 @@ REM This script is used to build and package mod_proxy_cluster modules for JBoss
 REM @echo off
 SetLocal EnableDelayedExpansion
 
-REM Build environment
-set "PATH=C:\Program Files (x86)\Microsoft Visual Studio\2017\Community\VC\Auxiliary\Build;C:\Program Files\Cppcheck;%PATH%"
 call vcvars64
 
 REM Dependencies
 IF "%DISTRO%" equ "jboss" (
-    REM We rely on label being the same. It is probably for the best, gonna keep the same MSVC...
-    REM httpd
-    del /s /f /q httpd-devel
-    unzip .\httpd\label=%label%\httpd*64-devel.zip -d httpd-devel
-    IF NOT %ERRORLEVEL% == 0 ( exit 1 )
-    del /s /f /q httpd-prod
-    unzip .\httpd\label=%label%\httpd*64.zip -d httpd-prod
-    IF NOT %ERRORLEVEL% == 0 ( exit 1 )
+    REM See how downloading artifacts from other jobs could look like:
+    REM   https://github.com/graalvm/mandrel-packaging/blob/master/jenkins/jobs/mandrel_windows_integration_tests.groovy#L47
+    REM del /s /f /q httpd-devel
+    REM unzip .\httpd\label=%label%\httpd*64-devel.zip -d httpd-devel
+    REM IF NOT %ERRORLEVEL% == 0 ( exit 1 )
+    REM del /s /f /q httpd-prod
+    REM unzip .\httpd\label=%label%\httpd*64.zip -d httpd-prod
+    REM IF NOT %ERRORLEVEL% == 0 ( exit 1 )
+    echo "Use Apache Lounge httpd"
+    exit 1
 ) else (
     REM Fetch Apache Lounge Apache HTTP Server distribution
-    if not exist httpd-%APACHE_LOUNGE_DISTRO_VERSION%-win64-VC16.zip (
-        powershell -Command "[Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12; $c = New-Object System.Net.WebClient; $url = 'https://www.apachelounge.com/download/VS16/binaries/httpd-%APACHE_LOUNGE_DISTRO_VERSION%-win64-VS16.zip'; $file = '%WORKSPACE%\httpd-%APACHE_LOUNGE_DISTRO_VERSION%-win64-VC16.zip'; $c.DownloadFile($url, $file);"
+    if not exist httpd-%APACHE_LOUNGE_DISTRO_VERSION%-win64-VS16.zip (
+        set downloadCommand= ^
+        $c = New-Object System.Net.WebClient; ^
+        $url = 'https://www.apachelounge.com/download/VS16/binaries/httpd-%APACHE_LOUNGE_DISTRO_VERSION%-win64-VS16.zip'; ^
+        $file = '%WORKSPACE%\httpd-%APACHE_LOUNGE_DISTRO_VERSION%-win64-VS16.zip'; ^
+        $c.DownloadFile($url, $file);
+        powershell -Command "%downloadCommand%"
     )
-    if not exist httpd-%APACHE_LOUNGE_DISTRO_VERSION%-win64-VC16.zip (
+    if not exist httpd-%APACHE_LOUNGE_DISTRO_VERSION%-win64-VS16.zip (
         echo Download failed.
         exit 1
     )
     del /s /f /q httpd-apache-lounge
-    unzip httpd-%APACHE_LOUNGE_DISTRO_VERSION%-win64-VC16.zip -d httpd-apache-lounge
+    powershell -c "Expand-Archive -Path httpd-%APACHE_LOUNGE_DISTRO_VERSION%-win64-VS16.zip -DestinationPath httpd-apache-lounge -Force"
     IF NOT %ERRORLEVEL% == 0 ( exit 1 )
 )
 
@@ -46,16 +51,14 @@ mkdir %WORKSPACE%\cmakebuild
 pushd %WORKSPACE%\cmakebuild
 
 IF "%DISTRO%" equ "jboss" (
-    for /f %%z in ('powershell -Command "get-childitem %WORKSPACE%\httpd-devel | Foreach-Object {$_ -replace 'httpd-(.*)','$1'}"') do set JBOSS_HTTPD_VERSION=%%z
-    SET HTTPD_DEV_HOME=%WORKSPACE%\httpd-devel\httpd-!JBOSS_HTTPD_VERSION!
-    copy /Y !HTTPD_DEV_HOME!\include\apr\* !HTTPD_DEV_HOME!\include\
+    REM for /f %%z in ('powershell -Command "get-childitem %WORKSPACE%\httpd-devel | Foreach-Object {$_ -replace 'httpd-(.*)','$1'}"') do set JBOSS_HTTPD_VERSION=%%z
+    REM SET HTTPD_DEV_HOME=%WORKSPACE%\httpd-devel\httpd-!JBOSS_HTTPD_VERSION!
+    REM copy /Y !HTTPD_DEV_HOME!\include\apr\* !HTTPD_DEV_HOME!\include\
 ) else (
     SET HTTPD_DEV_HOME=%WORKSPACE%\httpd-apache-lounge\Apache24
     REM It is not a good idea to try to generate the mod_proxy.lib file, so:
-
     REM Not necessary - they've started providing the file to us in their main package
     REM copy /Y %WORKSPACE%\ci-scripts\windows\mod_proxy_cluster\apache_lounge_%APACHE_LOUNGE_DISTRO_VERSION%\win64\mod_proxy.lib !HTTPD_DEV_HOME!\lib\mod_proxy.lib
-
     REM dumpbin /exports /nologo /out:!HTTPD_DEV_HOME!\lib\mod_proxy.def.tmp !HTTPD_DEV_HOME!\modules\mod_proxy.so
     REM IF NOT %ERRORLEVEL% == 0 ( exit 1 )
     REM echo EXPORTS> !HTTPD_DEV_HOME!\lib\mod_proxy.def
@@ -205,7 +208,7 @@ IF "%DISTRO%" equ "jboss" (
 
 echo ### Compatible with Apache HTTP Server>> %WORKSPACE%\%DISTRO_TARGET_DIR%\README.md
 IF "%DISTRO%" equ "jboss" (
-    echo JBoss build of Apache HTTP Server %JBOSS_HTTPD_VERSION% from https://ci.modcluster.io/job/httpd-windows/>> %WORKSPACE%\%DISTRO_TARGET_DIR%\README.md
+    REM echo JBoss build of Apache HTTP Server %JBOSS_HTTPD_VERSION% from https://ci.modcluster.io/job/httpd-windows/>> %WORKSPACE%\%DISTRO_TARGET_DIR%\README.md
 ) else (
     echo ApacheLounge HTTP Server %APACHE_LOUNGE_DISTRO_VERSION% from http://www.apachelounge.com/download>> %WORKSPACE%\%DISTRO_TARGET_DIR%\README.md
 )
@@ -223,26 +226,18 @@ copy /Y %WORKSPACE%\cmakebuild\modules\mod_*.so %WORKSPACE%\%DISTRO_TARGET_DIR%\
 powershell -command "Get-Childitem '%WORKSPACE%/mod_proxy_cluster/native/' -recurse -filter '*.h' | Copy-Item -Destination '%WORKSPACE%\%DISTRO_TARGET_DIR%\include\'"
 
 pushd %WORKSPACE%
-zip -r -9 %DISTRO_TARGET_DIR%-devel.zip %DISTRO_TARGET_DIR%
+powershell -command "Compress-Archive -Force -Path '%DISTRO_TARGET_DIR%' -DestinationPath '%DISTRO_TARGET_DIR%-devel.zip'"
 
 del /Q /F %WORKSPACE%\%DISTRO_TARGET_DIR%\modules\*.pdb
 del /Q /F %WORKSPACE%\%DISTRO_TARGET_DIR%\modules\*.lib
 del /S /F /Q %WORKSPACE%\%DISTRO_TARGET_DIR%\include
 
-zip -r -9 %DISTRO_TARGET_DIR%.zip %DISTRO_TARGET_DIR%
+powershell -command "Compress-Archive -Force -Path '%DISTRO_TARGET_DIR%' -DestinationPath '%DISTRO_TARGET_DIR%.zip'"
 
-sha1sum.exe %DISTRO_TARGET_DIR%-devel.zip>%DISTRO_TARGET_DIR%-devel.zip.sha1
-sha1sum.exe %DISTRO_TARGET_DIR%.zip>%DISTRO_TARGET_DIR%.zip.sha1
+powershell -c "$hash=(Get-FileHash %DISTRO_TARGET_DIR%-devel.zip -Algorithm SHA1).Hash;echo \"$hash %DISTRO_TARGET_DIR%-devel.zip\"">%DISTRO_TARGET_DIR%-devel.zip.sha1
+powershell -c "$hash=(Get-FileHash %DISTRO_TARGET_DIR%.zip -Algorithm SHA1).Hash;echo \"$hash %DISTRO_TARGET_DIR%.zip\"">%DISTRO_TARGET_DIR%.zip.sha1
 
 popd
-
-IF "%RUN_STATIC_ANALYSIS%" equ "true" (
-    REM use --force to expand all levels of all macros, kinda slow (single digit minutes even with such a small project)
-    cppcheck --enable=all --inconclusive --std=c89 ^
-    -I%HTTPD_DEV_HOME_POSSIX%/include/ ^
-    -I%WORKSPACE_POSSIX%/mod_proxy_cluster/native/include/ ^
-    --output-file=cppcheck.log %WORKSPACE_POSSIX%/mod_proxy_cluster/native/
-)
 
 tree /f /a
 echo Done.
