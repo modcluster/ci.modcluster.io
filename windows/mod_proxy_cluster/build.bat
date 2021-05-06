@@ -22,19 +22,14 @@ IF "%DISTRO%" equ "jboss" (
 ) else (
     REM Fetch Apache Lounge Apache HTTP Server distribution
     if not exist httpd-%APACHE_LOUNGE_DISTRO_VERSION%-win64-VS16.zip (
-        set downloadCommand= ^
-        $c = New-Object System.Net.WebClient; ^
-        $url = 'https://www.apachelounge.com/download/VS16/binaries/httpd-%APACHE_LOUNGE_DISTRO_VERSION%-win64-VS16.zip'; ^
-        $file = '%WORKSPACE%\httpd-%APACHE_LOUNGE_DISTRO_VERSION%-win64-VS16.zip'; ^
-        $c.DownloadFile($url, $file);
-        powershell -Command "%downloadCommand%"
+        powershell -Command "$Url = 'https://www.apachelounge.com/download/VS16/binaries/httpd-%APACHE_LOUNGE_DISTRO_VERSION%-win64-VS16.zip'; $DownloadZipFile = '%WORKSPACE%\' + $(Split-Path -Path $Url -Leaf); Invoke-WebRequest -Uri $Url -OutFile $DownloadZipFile -UserAgent Hello;"
     )
-    if not exist httpd-%APACHE_LOUNGE_DISTRO_VERSION%-win64-VS16.zip (
+    if not exist "%WORKSPACE%\httpd-%APACHE_LOUNGE_DISTRO_VERSION%-win64-VS16.zip" (
         echo Download failed.
         exit 1
     )
     del /s /f /q httpd-apache-lounge
-    powershell -c "Expand-Archive -Path httpd-%APACHE_LOUNGE_DISTRO_VERSION%-win64-VS16.zip -DestinationPath httpd-apache-lounge -Force"
+    powershell -c "Expand-Archive -Path '%WORKSPACE%\httpd-%APACHE_LOUNGE_DISTRO_VERSION%-win64-VS16.zip' -DestinationPath '%WORKSPACE%\httpd-apache-lounge' -Force"
     IF NOT %ERRORLEVEL% == 0 ( exit 1 )
 )
 
