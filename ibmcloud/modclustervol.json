@@ -1,0 +1,14 @@
+[
+    {
+        "name": "modcluster-attachment",
+        "delete_volume_on_instance_delete": true,
+        "volume": {
+            "name": "modcluster",
+            "capacity": 100,
+            "iops": 1000,
+            "profile": {
+                "name": "custom"
+            }
+        }
+    }
+]
