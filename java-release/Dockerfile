@@ -1,17 +1,18 @@
-FROM centos:latest
+FROM fedora:latest
+
 LABEL Author="Radoslav Husar <radosoft@gmail.com>"
 
-RUN yum update -y && \
-    yum install -y git which java-1.7.0-openjdk-devel java-1.8.0-openjdk-devel && \
-    yum clean all && \
+RUN dnf upgrade -y && \
+    dnf install -y git java-11-openjdk-devel && \
+    dnf clean all && \
     useradd -s /sbin/nologin jboss
 
 USER jboss
 WORKDIR /home/jboss
 COPY --chown=jboss:jboss settings.xml .
 
-ENV TAG=master
-ENV JAVA_VERSION=1.8.0
+ENV TAG=main
+ENV JAVA_VERSION=11
 ENV GITHUB_ORGANIZATION=modcluster
 ENV GITHUB_REPOSITORY=mod_cluster
 
