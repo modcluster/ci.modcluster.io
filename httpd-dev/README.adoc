@@ -1,0 +1,8 @@
+= httpd-dev image
+
+== Building
+
+[source]
+----
+docker build --no-cache --progress=plain -f Containerfile . -t quay.io/mod_cluster/ci-httpd-dev
+----
