@@ -1,8 +1,18 @@
 = httpd-dev image
 
-== Building
+This container image is used by `mod_proxy_cluster` CI workflows defined at:
 
-[source]
+https://github.com/modcluster/mod_proxy_cluster/blob/main/.github/workflows/
+
+== Quay.io
+
+This container image is built automatically by Quay.io and available from this repository:
+
+https://quay.io/repository/mod_cluster/ci-httpd-dev
+
+== Building locally
+
+[source,shell]
 ----
 docker build --no-cache --progress=plain -f Containerfile . -t quay.io/mod_cluster/ci-httpd-dev
 ----
