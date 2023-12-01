@@ -1,3 +1,7 @@
-# ci.modcluster.io
+= ci.modcluster.io
 
 Apache HTTP Server postinstall scripts, build scripts and patches, containerized Java release scripting for projects on https://ci.modcluster.io
+
+== License
+
+* http://www.apache.org/licenses/LICENSE-2.0[Apache License 2.0]
