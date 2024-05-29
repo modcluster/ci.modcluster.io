@@ -6,7 +6,7 @@ RUN cd /usr/include/ && ln -s libxml2/libxml .
 # get httpd and checkout the appropriate version
 RUN git clone https://github.com/apache/httpd
 WORKDIR /httpd/
-RUN git checkout 2.4.58
+RUN git checkout 2.4.59
 # get apr library
 RUN git clone https://github.com/apache/apr srclib/apr
 # configure httpd
