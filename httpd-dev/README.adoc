@@ -2,7 +2,7 @@
 
 This container image is used by `mod_proxy_cluster` CI workflows defined at:
 
-https://github.com/modcluster/mod_proxy_cluster/blob/main/.github/workflows/
+https://github.com/modcluster/mod_proxy_cluster/blob/main/.github/workflows/ci.yml
 
 == Quay.io
 
@@ -11,6 +11,15 @@ This container image is built automatically by Quay.io and available from this r
 https://quay.io/repository/mod_cluster/ci-httpd-dev
 
 == Building locally
+
+=== Using Podman
+
+[source,shell]
+----
+podman build --no-cache --progress=plain . -t quay.io/mod_cluster/ci-httpd-dev
+----
+
+=== Using Docker
 
 [source,shell]
 ----
