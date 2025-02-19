@@ -1,24 +1,35 @@
 FROM registry.access.redhat.com/ubi9/ubi:latest
+
+ARG HTTPD_VERSION=2.4.63
+
 # install necessary tools (+ some useful ones too)
 RUN dnf update -y && dnf install -y git gcc make libtool python3 autoconf libxml2-devel pcre2-devel && dnf clean all
+
 # libxml workaround
 RUN cd /usr/include/ && ln -s libxml2/libxml .
+
 # get httpd and checkout the appropriate version
+ENV HTTPD_VERSION=${HTTPD_VERSION}
 RUN git clone https://github.com/apache/httpd
 WORKDIR /httpd/
-RUN git checkout 2.4.63
+RUN git checkout $HTTPD_VERSION
+
 # get apr library
 RUN git clone https://github.com/apache/apr srclib/apr
-# configure httpd
-RUN export CFLAGS="-g"
-# define APACHE_DIR variable
-RUN echo "APACHE_DIR=/usr/local/apache2/" >> /root/.bashrc
+
+# configure APACHE_DIR variable
+ENV APACHE_DIR=/usr/local/apache2/
+
+# configure and build httpd
 RUN ./buildconf
 RUN ./configure --prefix=/usr/local/apache2 --with-included-apr --enable-proxy-ajp --enable-maintainer-mode \
 --enable-so --enable-proxy --enable-proxy-http --enable-proxy-wstunned --enable-proxy-hcheck \
 --with-port=8000 --with-libxml2
+
 # build httpd
 RUN make
 RUN make install
+
 # start bash
+WORKDIR /
 CMD ["/bin/bash", "-c", "bash"]

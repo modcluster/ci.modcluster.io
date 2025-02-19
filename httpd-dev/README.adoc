@@ -23,5 +23,8 @@ podman build --no-cache --progress=plain . -t quay.io/mod_cluster/ci-httpd-dev
 
 [source,shell]
 ----
-docker build --no-cache --progress=plain -f Containerfile . -t quay.io/mod_cluster/ci-httpd-dev
+docker build --no-cache -f Containerfile . -t quay.io/mod_cluster/ci-httpd-dev
 ----
+
+Additionally, you can specify your own git revision while building a container image by using
+`--build-arg HTTPD_VERSION=<your version>` flag with the `build` command.
