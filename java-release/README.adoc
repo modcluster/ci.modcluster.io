@@ -1,47 +1,49 @@
-= Release Scripting
+= Containerized Release Scripting
 
-Welcome to a containerized release process for mod_cluster container integration modules.
+Welcome to a containerized release process for mod_cluster container integration modules (or any `maven-release-plugin` released project from GitHub really).
 
 Easy, reproducible, secure.
 
 == Building Release Container Image
 
 In case you need to rebuild the container release image, build and deploy as follows.
-When using `podman` and `quay.io` run:
+Using `podman` and `quay.io` run:
 
-    podman build --no-cache -t mod_cluster/mod_cluster-java-release:main .
-    podman login
-    podman push modcluster-java-release:main quay.io/mod_cluster/mod_cluster-java-release
-
-    $ cat ~/.config/containers/registries.conf
-    unqualified-search-registries = ["quay.io"]
-
-or if using `docker` and Docker Hub run:
-
-    docker build --no-cache -t modcluster/mod_cluster-java-release:main .
-    docker login
-    docker push modcluster/mod_cluster-java-release:main
+[source,shell]
+----
+podman build --no-cache -t mod_cluster/mod_cluster-java-release:main .
+echo "unqualified-search-registries = [\"quay.io\"]" >> ~/.config/containers/registries.conf
+podman login
+podman push modcluster-java-release:main quay.io/mod_cluster/mod_cluster-java-release
+----
 
 == Steps
 
 . Prepare https://github.com/modcluster/mod_cluster branch for release.
 . Tag the release using `maven-release-plugin`.
 
-    mvn release:prepare -P dist -DautoVersionSubmodules=true
+[source,shell]
+----
+mvn release:prepare -DautoVersionSubmodules=true
+----
 
 . Inspect, verify the tag and push it upstream (since 1.4 release plugin is configured to do this automatically,
   thus make sure to verify branch before preparing the release):
 
-    git push upstream
-    git push upstream 1.4.0.Final
+[source,shell]
+----
+git push upstream
+git push upstream 2.1.0.Final
+----
 
 . Perform a release using the container image changing the parameters as necessary:
 
-    export JBOSS_USERNAME=username
-    export JBOSS_PASSWORD=password
-    docker run -e TAG=1.4.0.Final -e JAVA_VERSION=11 -e JBOSS_USERNAME -e JBOSS_PASSWORD modcluster/mod_cluster-java-release:main
-
-    podman run -e TAG=1.4.0.Final -e JAVA_VERSION=11 -e JBOSS_USERNAME -e JBOSS_PASSWORD mod_cluster/mod_cluster-java-release:main
+[source,shell]
+----
+export JBOSS_USERNAME=username
+export JBOSS_PASSWORD=password
+podman run -e TAG=1.4.0.Final -e JAVA_VERSION=11 -e JBOSS_USERNAME -e JBOSS_PASSWORD mod_cluster/mod_cluster-java-release:main
+----
 
 . Check, close and promote the staging repository: https://repository.jboss.org/nexus/index.html#stagingRepositories
 
@@ -52,6 +54,9 @@ or if using `docker` and Docker Hub run:
 To test or release custom branches from custom GitHub repositories,
 you can set up the release step with `GITHUB_ORGANIZATION` and `GITHUB_REPOSITORY`:
 
-    docker run -e TAG=MODCLUSTER-686 -e GITHUB_ORGANIZATION=rhusar -e GITHUB_REPOSITORY=mod_cluster -e JBOSS_USERNAME -e JBOSS_PASSWORD modcluster/mod_cluster-java-release:main
+[source,shell]
+----
+podman run -e TAG=MODCLUSTER-686 -e GITHUB_ORGANIZATION=rhusar -e GITHUB_REPOSITORY=mod_cluster -e JBOSS_USERNAME -e JBOSS_PASSWORD modcluster/mod_cluster-java-release:main
+----
 
 Enjoy. ― Rado
