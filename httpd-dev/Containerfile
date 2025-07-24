@@ -1,6 +1,6 @@
 FROM registry.access.redhat.com/ubi9/ubi:latest
 
-ARG HTTPD_VERSION=2.4.64
+ARG HTTPD_VERSION=2.4.65
 
 # install necessary tools (+ some useful ones too)
 RUN dnf update -y && dnf install -y git gcc make libtool python3 autoconf libxml2-devel pcre2-devel && dnf clean all
