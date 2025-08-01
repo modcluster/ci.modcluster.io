@@ -1,9 +1,10 @@
-FROM registry.access.redhat.com/ubi9/ubi:latest
+FROM registry.access.redhat.com/ubi10/ubi:latest
 
 ARG HTTPD_VERSION=2.4.65
+ARG APACHE_DIR=/usr/local/apache2
 
 # install necessary tools (+ some useful ones too)
-RUN dnf update -y && dnf install -y git gcc make libtool python3 autoconf libxml2-devel pcre2-devel && dnf clean all
+RUN dnf update -y && dnf install -y git gcc make libtool python3 autoconf libxml2-devel pcre2-devel
 
 # libxml workaround
 RUN cd /usr/include/ && ln -s libxml2/libxml .
@@ -18,13 +19,20 @@ RUN git checkout $HTTPD_VERSION
 RUN git clone https://github.com/apache/apr srclib/apr
 
 # configure APACHE_DIR variable
-ENV APACHE_DIR=/usr/local/apache2/
+ENV APACHE_DIR=${APACHE_DIR}
 
 # configure and build httpd
 RUN ./buildconf
-RUN ./configure --prefix=/usr/local/apache2 --with-included-apr --enable-proxy-ajp --enable-maintainer-mode \
---enable-so --enable-proxy --enable-proxy-http --enable-proxy-wstunned --enable-proxy-hcheck \
---with-port=8000 --with-libxml2
+RUN ./configure --prefix=${APACHE_DIR} \
+                --with-included-apr \
+                --enable-proxy-ajp \
+                --enable-maintainer-mode \
+                --enable-so \
+                --enable-proxy \
+                --enable-proxy-http \
+                --enable-proxy-wstunnel \
+                --enable-proxy-hcheck \
+                --with-libxml2
 
 # build httpd
 RUN make
