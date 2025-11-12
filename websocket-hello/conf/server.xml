@@ -1,0 +1,1 @@
+<Listener className="org.jboss.modcluster.container.catalina.standalone.ModClusterListener" ProxyList="localhost:8747" connectorPort="8080" />
