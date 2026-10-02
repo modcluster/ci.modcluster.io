@@ -1,6 +1,6 @@
 FROM registry.access.redhat.com/ubi10/ubi:latest
 
-ARG HTTPD_VERSION=2.4.68
+ARG HTTPD_VERSION=2.4.69
 ARG APACHE_DIR=/usr/local/apache2
 
 # install necessary tools (+ some useful ones too)
